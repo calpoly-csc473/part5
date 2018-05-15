@@ -1,9 +1,10 @@
 
 #include "Application.hpp"
+#include "SceneInfo.hpp"
+#include "Renderer.hpp"
 
 #include "RayTracer.hpp"
 #include "Scene.hpp"
-#include "SceneInfo.hpp"
 
 #include "Sphere.hpp"
 #include "Plane.hpp"
@@ -15,10 +16,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
-#include <atomic>
 #include <iomanip>
-#include <thread>
 
 
 void Application::ReadArguments(int argc, char ** argv)
@@ -48,6 +46,46 @@ int Application::Run()
 	return ReturnStatus;
 }
 
+void Application::PrintUsage()
+{
+	if (! CommandArguments.size())
+	{
+		printf("No command arguments found.\n");
+		printf("usage: raytracer <command> <file_name> [arguments ...]\n");
+		return;
+	}
+
+	if (CommandArguments.size() < 3)
+	{
+		printf("usage: %s <command> <file_name> [arguments ...]\n", CommandArguments[0].c_str());
+		return;
+	}
+
+	std::string const ProgramName = CommandArguments[0];
+	std::string const Command = CommandArguments[1];
+
+	if (Command == "render")
+	{
+		printf("usage: %s render <file_name> [arguments ...]\n", ProgramName.c_str());
+	}
+	else if (Command == "sceneinfo")
+	{
+		printf("usage: %s sceneinfo <file_name> [arguments ...]\n", ProgramName.c_str());
+	}
+	else if (Command == "pixelray")
+	{
+		printf("usage: %s pixelray <file_name> [arguments ...]\n", ProgramName.c_str());
+	}
+	else if (Command == "firsthit")
+	{
+		printf("usage: %s firsthit <file_name> [arguments ...]\n", ProgramName.c_str());
+	}
+	else
+	{
+		printf("unknown command: %s\n", Command.c_str());
+	}
+}
+
 void Application::RunCommands()
 {
 	if (CommandArguments.size() < 2)
@@ -64,12 +102,6 @@ void Application::RunCommands()
 	}
 
 	fileName = CommandArguments[2];
-
-	scene = new Scene();
-	rayTracer = new RayTracer();
-
-	params.imageSize.x = 640;
-	params.imageSize.y = 480;
 
 	std::cout << std::setiosflags(std::ios::fixed);
 	std::cout << std::setprecision(4);
@@ -89,6 +121,9 @@ void Application::RunCommands()
 	///////////////////
 	// Draw Commands //
 	///////////////////
+
+	scene = LoadPovrayScene(fileName);
+	rayTracer = new RayTracer(scene);
 
 	if (CommandArguments.size() < 5)
 	{
@@ -113,7 +148,8 @@ void Application::RunCommands()
 		}
 
 		ParseExtraParams(5);
-		DrawSceneThreaded();
+		rayTracer->SetParams(params);
+		Renderer::DrawThreaded(rayTracer, scene);
 
 		return;
 	}
@@ -132,20 +168,19 @@ void Application::RunCommands()
 	int const Y = std::stoi(CommandArguments[6]);
 
 	ParseExtraParams(7);
-	scene->SetParams(params);
-	LoadPovrayScene();
+	rayTracer->SetParams(params);
 
 	if (Command == "pixelray")
 	{
-		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), scene->GetParams().imageSize);
+		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), rayTracer->GetParams().imageSize);
 
 		std::cout << "Pixel: [" << X << ", " << Y << "] Ray: " << ray << std::endl;
 		return;
 	}
 	else if (Command == "firsthit")
 	{
-		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), scene->GetParams().imageSize);
-		RayHitResults const results = scene->GetRayHitResults(scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), scene->GetParams().imageSize));
+		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), rayTracer->GetParams().imageSize);
+		RayHitResults const results = scene->GetRayHitResults(scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), rayTracer->GetParams().imageSize));
 		float const intersection = results.t;
 		Object const * const object = results.object;
 
@@ -166,7 +201,7 @@ void Application::RunCommands()
 	else if (Command == "pixelcolor")
 	{
 		Pixel const pixel = rayTracer->CastRaysForPixel(glm::ivec2(X, Y));
-		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), scene->GetParams().imageSize);
+		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), rayTracer->GetParams().imageSize);
 		RayHitResults const Results = scene->GetRayHitResults(scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), params.imageSize));
 		float const intersection = Results.t;
 		Object const * const object = Results.object;
@@ -218,40 +253,20 @@ void Application::ParseExtraParams(size_t const StartIndex)
 	}
 }
 
-void Application::LoadPovrayScene()
+Scene * Application::LoadPovrayScene(const std::string & fileName)
 {
-	std::ifstream file;
-	file.open(fileName);
-
-	if (! file.is_open())
-	{
-		std::cerr << "Failed to open file '" << fileName << "'\n" << std::endl;
-		throw std::runtime_error("povray scene file could not be opened");
-	}
-
-	std::string Contents{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()}; // inefficient
+	Scene * scene = new Scene();
 
 	parser::Parser p;
-
-	try
-	{
-		TokenStream ts = Tokenizer::Tokenize(Contents);
-		p.Parse(ts);
-	}
-	catch (const std::exception & e)
-	{
-		std::cerr << "exception: " << e.what() << std::endl;
-		throw std::runtime_error("povray scene could not be parsed");
-	}
+	p.Parse(fileName);
 
 	scene->GetCamera().SetPosition(p.camera.location);
 	scene->GetCamera().SetLookAt(p.camera.look_at);
 	scene->GetCamera().SetUpVector(p.camera.up);
 	scene->GetCamera().SetRightVector(p.camera.right);
 
-	for (size_t i = 0; i < p.objects.size(); ++ i)
+	for (const parser::Object & o : p.objects)
 	{
-		const parser::Object & o = p.objects[i];
 		Object * object = nullptr;
 
 		switch (o.type)
@@ -285,133 +300,18 @@ void Application::LoadPovrayScene()
 			scene->AddObject(object);
 		}
 	}
+
+	for (const parser::Light & l : p.lights)
+	{
+		Light * light = new Light();
+		light->color = l.color;
+		light->position = l.position;
+		scene->AddLight(light);
+	}
+
+	return scene;
 }
 
 void Application::PrintRayInfo(Scene * scene, int const x, int const y, bool const decoration)
 {
-}
-
-void Application::DrawSceneThreaded()
-{
-	bool const UseThreads = true;
-	glm::ivec2 const ScreenSize = params.imageSize;
-
-	unsigned char * ImageBuffer = new unsigned char[ScreenSize.x * ScreenSize.y * 4];
-	for (int x = 0; x < ScreenSize.x; ++ x)
-	{
-		for (int y = 0; y < ScreenSize.y; ++ y)
-		{
-			ImageBuffer[x * 4 + y * 4 * ScreenSize.x + 0] = 0;
-			ImageBuffer[x * 4 + y * 4 * ScreenSize.x + 1] = 0;
-			ImageBuffer[x * 4 + y * 4 * ScreenSize.x + 2] = 0;
-			ImageBuffer[x * 4 + y * 4 * ScreenSize.x + 3] = 0;
-		}
-	}
-
-
-	/////////////////
-	// Scene Setup //
-	/////////////////
-
-	scene->SetParams(params);
-	LoadPovrayScene();
-
-
-
-	///////////////////
-	// Render Thread //
-	///////////////////
-
-	static int const ThreadCount = 12;
-	int const PixelCount = ScreenSize.x * ScreenSize.y;
-
-	std::atomic<int> DoneCount;
-	std::atomic<int> currentPixel;
-
-	DoneCount = 0;
-	currentPixel = 0;
-
-	auto RenderKernel = [&](int const ThreadIndex)
-	{
-		while (true)
-		{
-			int pixel = currentPixel ++;
-
-			if (pixel >= PixelCount)
-			{
-				break;
-			}
-
-			int const X = pixel / ScreenSize.y;
-			int const Y = pixel % ScreenSize.y;
-
-			Pixel p = rayTracer->CastRaysForPixel(glm::ivec2(X, Y));
-			ImageBuffer[X * 4 + Y * 4 * ScreenSize.x + 0] = p.Red;
-			ImageBuffer[X * 4 + Y * 4 * ScreenSize.x + 1] = p.Green;
-			ImageBuffer[X * 4 + Y * 4 * ScreenSize.x + 2] = p.Blue;
-			ImageBuffer[X * 4 + Y * 4 * ScreenSize.x + 3] = 255;
-		}
-
-		DoneCount ++;
-
-		if (ThreadIndex == 0)
-		{
-			while (DoneCount < ThreadCount)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(100));
-			}
-		}
-	};
-
-	std::vector<std::thread> Threads;
-	for (int i = 0; i < ThreadCount; ++ i)
-	{
-		Threads.push_back(std::thread(RenderKernel, i));
-	}
-	for (int i = 0; i < ThreadCount; ++ i)
-	{
-		Threads[i].join();
-	}
-
-	//Image->Write("output.png");
-}
-
-void Application::PrintUsage()
-{
-	if (! CommandArguments.size())
-	{
-		printf("No command arguments found.\n");
-		printf("usage: raytracer <command> <file_name> [arguments ...]\n");
-		return;
-	}
-
-	if (CommandArguments.size() < 3)
-	{
-		printf("usage: %s <command> <file_name> [arguments ...]\n", CommandArguments[0].c_str());
-		return;
-	}
-
-	std::string const ProgramName = CommandArguments[0];
-	std::string const Command = CommandArguments[1];
-
-	if (Command == "render")
-	{
-		printf("usage: %s render <file_name> [arguments ...]\n", ProgramName.c_str());
-	}
-	else if (Command == "sceneinfo")
-	{
-		printf("usage: %s sceneinfo <file_name> [arguments ...]\n", ProgramName.c_str());
-	}
-	else if (Command == "pixelray")
-	{
-		printf("usage: %s pixelray <file_name> [arguments ...]\n", ProgramName.c_str());
-	}
-	else if (Command == "firsthit")
-	{
-		printf("usage: %s firsthit <file_name> [arguments ...]\n", ProgramName.c_str());
-	}
-	else
-	{
-		printf("unknown command: %s\n", Command.c_str());
-	}
 }

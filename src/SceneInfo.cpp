@@ -14,29 +14,8 @@
 
 void SceneInfo::RunCommand(const std::string & fileName)
 {
-	std::ifstream file;
-	file.open(fileName);
-
-	if (! file.is_open())
-	{
-		std::cerr << "Failed to open file '" << fileName << "'\n" << std::endl;
-		throw std::runtime_error("povray scene file could not be opened");
-	}
-
-	std::string Contents{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()}; // inefficient
-
 	parser::Parser p;
-
-	try
-	{
-		TokenStream ts = Tokenizer::Tokenize(Contents);
-		p.Parse(ts);
-	}
-	catch (const std::exception & e)
-	{
-		std::cerr << "exception: " << e.what() << std::endl;
-		throw std::runtime_error("povray scene could not be parsed");
-	}
+	p.Parse(fileName);
 
 	PrintInfo(p);
 }

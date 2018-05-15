@@ -26,6 +26,7 @@ namespace parser
 
 	public:
 
+		void Parse(const std::string & fileName);
 		void Parse(TokenStream & tokens);
 
 		Camera camera;

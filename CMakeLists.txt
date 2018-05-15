@@ -28,6 +28,7 @@ set(SOURCES
 	src/Pixel.cpp
 	src/Plane.cpp
 	src/RayTracer.cpp
+	src/Renderer.cpp
 	src/Scene.cpp
 	src/SceneInfo.cpp
 	src/Sphere.cpp
@@ -51,6 +52,7 @@ set(HEADERS
 	src/Ray.hpp
 	src/RayTraceResults.hpp
 	src/RayTracer.hpp
+	src/Renderer.hpp
 	src/Scene.hpp
 	src/SceneInfo.hpp
 	src/Sphere.hpp
@@ -61,6 +63,7 @@ set(HEADERS
 add_library(parser ${PARSER})
 
 add_executable(raytrace ${SOURCES} ${HEADERS})
+target_include_directories(raytrace PUBLIC "ext/")
 target_include_directories(raytrace PUBLIC "lib/")
 target_link_libraries(raytrace parser)
 

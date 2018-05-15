@@ -1,12 +1,42 @@
 
 #include "RayTracer.hpp"
-#include "Scene.hpp"
 
+#include "Scene.hpp"
+#include "BlinnPhongBRDF.hpp"
+#include "CookTorranceBRDF.hpp"
+
+
+RayTracer::RayTracer(Scene * scene)
+{
+	this->scene = scene;
+}
+
+void RayTracer::SetDebugContext(PixelContext * context)
+{
+	this->context = context;
+}
+
+void RayTracer::SetParams(Params const & params)
+{
+	this->params = params;
+
+	if (params.useCookTorrance)
+	{
+		brdf = new CookTorranceBRDF();
+	}
+	else
+	{
+		brdf = new BlinnPhongBRDF();
+	}
+}
+
+const Params & RayTracer::GetParams() const
+{
+	return params;
+}
 
 Pixel RayTracer::CastRaysForPixel(glm::ivec2 const & pixel) const
 {
-	glm::vec3 color;
-
 	Ray const ray = scene->GetCamera().GetPixelRay(pixel, params.imageSize);
 
 	if (context)
@@ -15,9 +45,8 @@ Pixel RayTracer::CastRaysForPixel(glm::ivec2 const & pixel) const
 		context->iterations.back()->type = PixelContext::IterationType::Primary;
 		context->iterations.back()->parent = nullptr;
 	}
-	color += CastRay(ray, params.recursiveDepth).ToColor();
 
-	return Pixel(color);
+	return Pixel(CastRay(ray, params.recursiveDepth).ToColor());
 }
 
 RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
@@ -72,14 +101,15 @@ RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 
 		Results.Ambient = LocalContribution * GetAmbientResults(HitObject, Point, Normal, Depth);
 
-		for (auto Light : scene->GetLights())
+		for (Light * light : scene->GetLights())
 		{
-			bool const InShadow = scene->IsLightOccluded(HitObject, Point, Light->position, ContextIteration);
+			const bool InShadow = params.useShadows ? scene->IsLightOccluded(HitObject, Point, light->position, ContextIteration) : false;
 			if (! InShadow)
 			{
-				LightingResults LightingResults = GetLightingResults(Light, HitObject->GetMaterial(), Point, View, Normal);
-				Results.Diffuse += LocalContribution * LightingResults.Diffuse;
-				Results.Specular += LocalContribution * LightingResults.Specular;
+				const LightingResults lighting = GetLightingResults(light, HitObject->GetMaterial(), Point, View, Normal);
+
+				Results.Diffuse += LocalContribution * lighting.Diffuse;
+				Results.Specular += LocalContribution * lighting.Specular;
 			}
 		}
 
@@ -164,11 +194,11 @@ LightingResults RayTracer::GetLightingResults(Light const * const light, Materia
 		surface.view = View;
 		surface.light = glm::normalize(light->position - Point);
 
-		glm::vec3 const Diffuse = scene->GetBRDF()->CalculateDiffuse(material, surface);
-		glm::vec3 const Specular = scene->GetBRDF()->CalculateSpecular(material, surface);
-
-		Results.Diffuse = light->color * material.finish.diffuse * material.color * Diffuse;
-		Results.Specular = light->color * material.finish.specular * material.color * Specular;
+		if (brdf)
+		{
+			Results.Diffuse  = light->color * material.finish.diffuse  * material.color * brdf->CalculateDiffuse(material, surface);
+			Results.Specular = light->color * material.finish.specular * material.color * brdf->CalculateSpecular(material, surface);
+		}
 	}
 	else
 	{

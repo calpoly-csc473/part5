@@ -4,8 +4,12 @@
 
 
 #include "Parser.hpp"
+#include "Tokenizer.hpp"
 #include "parse_error.hpp"
+
+#include <iostream>
 #include <sstream>
+#include <fstream>
 
 using namespace std;
 
@@ -13,6 +17,30 @@ using namespace std;
 namespace parser
 {
 
+	void Parser::Parse(const std::string & fileName)
+	{
+		std::ifstream file;
+		file.open(fileName);
+
+		if (! file.is_open())
+		{
+			std::cerr << "Failed to open file '" << fileName << "'\n" << std::endl;
+			throw std::runtime_error("povray scene file could not be opened");
+		}
+
+		std::string Contents{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()}; // inefficient
+
+		try
+		{
+			TokenStream ts = Tokenizer::Tokenize(Contents);
+			Parse(ts);
+		}
+		catch (const std::exception & e)
+		{
+			std::cerr << "exception: " << e.what() << std::endl;
+			throw std::runtime_error("povray scene could not be parsed");
+		}
+	}
 
 	void Parser::Parse(TokenStream & tokens)
 	{

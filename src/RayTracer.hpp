@@ -30,7 +30,11 @@ class RayTracer
 
 public:
 
-	void SetDebugContext(PixelContext * Context = nullptr);
+	RayTracer(Scene * scene);
+
+	void SetDebugContext(PixelContext * context);
+	void SetParams(Params const & params);
+	const Params & GetParams() const;
 
 	Pixel CastRaysForPixel(glm::ivec2 const & Pixel) const;
 	RayTraceResults CastRay(Ray const & Ray, int Depth) const;
@@ -43,9 +47,11 @@ public:
 
 protected:
 
-	PixelContext * context = nullptr;
-	Scene * scene = nullptr;
 	Params params;
+	Scene * scene = nullptr;
+	BRDF * brdf = nullptr;
+
+	PixelContext * context = nullptr;
 
 	const float reflectionEpsilon = 0.001f;
 	const float refractionEpsilon = 0.001f;

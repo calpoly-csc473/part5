@@ -1,7 +1,5 @@
 
 #include "Scene.hpp"
-#include "BlinnPhongBRDF.hpp"
-#include "CookTorranceBRDF.hpp"
 
 
 Object * Scene::AddObject(Object * object)
@@ -27,25 +25,6 @@ std::vector<Light *> & Scene::GetLights()
 	return lights;
 }
 
-void Scene::SetParams(Params const & params)
-{
-	this->params = params;
-
-	if (params.useCookTorrance)
-	{
-		brdf = new CookTorranceBRDF();
-	}
-	else
-	{
-		brdf = new BlinnPhongBRDF();
-	}
-}
-
-Params const & Scene::GetParams() const
-{
-	return params;
-}
-
 Camera const & Scene::GetCamera() const
 {
 	return camera;
@@ -56,41 +35,33 @@ Camera & Scene::GetCamera()
 	return camera;
 }
 
-const BRDF * Scene::GetBRDF()
-{
-	return brdf;
-}
-
 bool Scene::IsLightOccluded(const Object * const HitObject, glm::vec3 const & Point, glm::vec3 const & LightPosition, PixelContext::Iteration * CurrentIteration) const
 {
 	const float shadowRayEpsilon = 0.0001f;
 
-	if (params.useShadows)
+	glm::vec3 const LightVector = glm::normalize(LightPosition - Point);
+	float const LightDistance = glm::length(LightPosition - Point);
+	Ray const ray = Ray(Point, LightVector);
+
+	RayHitResults ShadowHit;
+
+	if (CurrentIteration)
 	{
-		glm::vec3 const LightVector = glm::normalize(LightPosition - Point);
-		float const LightDistance = glm::length(LightPosition - Point);
-		Ray const ray = Ray(Point, LightVector);
+		CurrentIteration->shadowRays.push_back(PixelContext::ShadowInfo());
+		CurrentIteration->shadowRays.back().ray = ray;
+	}
 
-		RayHitResults ShadowHit;
-
-		if (CurrentIteration)
+	for (auto Object : objects)
+	{
+		if (Object != HitObject && Object->Intersect(ray, & ShadowHit))
 		{
-			CurrentIteration->shadowRays.push_back(PixelContext::ShadowInfo());
-			CurrentIteration->shadowRays.back().ray = ray;
-		}
-
-		for (auto Object : objects)
-		{
-			if (Object != HitObject && Object->Intersect(ray, & ShadowHit))
+			if (ShadowHit.t && ShadowHit.t < LightDistance)
 			{
-				if (ShadowHit.t && ShadowHit.t < LightDistance)
+				if (CurrentIteration)
 				{
-					if (CurrentIteration)
-					{
-						CurrentIteration->shadowRays.back().Hit = true;
-					}
-					return true;
+					CurrentIteration->shadowRays.back().Hit = true;
 				}
+				return true;
 			}
 		}
 	}
