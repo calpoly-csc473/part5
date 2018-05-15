@@ -21,6 +21,9 @@ set(PARSER
 set(SOURCES
 	src/main.cpp
 	src/Application.cpp
+	src/BlinnPhongBRDF.cpp
+	src/Camera.cpp
+	src/CookTorranceBRDF.cpp
 	src/Object.cpp
 	src/Pixel.cpp
 	src/RayTracer.cpp
@@ -30,8 +33,10 @@ set(SOURCES
 
 set(HEADERS
 	src/Application.hpp
+	src/BlinnPhongBRDF.hpp
 	src/BRDF.hpp
 	src/Camera.hpp
+	src/CookTorranceBRDF.hpp
 	src/Light.hpp
 	src/Object.hpp
 	src/Params.hpp

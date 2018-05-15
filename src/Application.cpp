@@ -2,11 +2,16 @@
 #include "Application.hpp"
 
 #include "RayTracer.hpp"
+#include "Scene.hpp"
+
+#include <parser/Tokenizer.hpp>
+#include <parser/Parser.hpp>
 
 #include <iostream>
+#include <fstream>
 #include <string>
+
 #include <atomic>
-#include <iterator>
 #include <iomanip>
 #include <thread>
 
@@ -206,6 +211,37 @@ void Application::ParseExtraParams(size_t const StartIndex)
 			params.debugNormals = true;
 		}
 	}
+}
+
+void Application::LoadPovrayScene()
+{
+	std::ifstream file;
+	file.open(fileName);
+
+	if (! file.is_open())
+	{
+		std::cerr << "Failed to open file '" << fileName << "'\n" << std::endl;
+		throw std::runtime_error("povray scene file could not be opened");
+	}
+
+	std::string Contents{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()}; // inefficient
+
+	parser::Parser p;
+
+	try
+	{
+		TokenStream ts = Tokenizer::Tokenize(Contents);
+		p.Parse(ts);
+	}
+	catch (const std::exception & e)
+	{
+		std::cerr << "exception: " << e.what() << std::endl;
+		throw std::runtime_error("povray scene could not be parsed");
+	}
+}
+
+void Application::PrintRayInfo(Scene * scene, int const x, int const y, bool const decoration)
+{
 }
 
 void Application::RunCommandSceneInfo()

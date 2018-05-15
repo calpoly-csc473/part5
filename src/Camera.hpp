@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "Params.hpp"
+#include "Ray.hpp"
 
 
 class Camera
@@ -22,7 +23,7 @@ public:
 	void SetUpVector(glm::vec3 const & upVector);
 	void SetRightVector(glm::vec3 const & rightVector);
 
-	static glm::vec2 PixelToNormalized(glm::ivec2 const & Pixel, glm::ivec2 const & ScreenSize);
+	static glm::vec2 PixelToView(glm::ivec2 const & Pixel, glm::ivec2 const & ScreenSize);
 	Ray GetPixelRay(glm::ivec2 const & Pixel, glm::ivec2 const & ScreenSize) const;
 
 	Params params;

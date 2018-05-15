@@ -47,7 +47,6 @@ protected:
 	Scene * scene = nullptr;
 	Params params;
 
-	const float shadowRayEpsilon = 0.0001f;
 	const float reflectionEpsilon = 0.001f;
 	const float refractionEpsilon = 0.001f;
 

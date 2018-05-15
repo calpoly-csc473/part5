@@ -229,3 +229,23 @@ glm::vec3 RayTracer::GetRefractionResults(Material const & Material, glm::vec3 c
 
 	return glm::vec3(0.f);
 }
+
+glm::vec3 RayTracer::CalculateRefractionVector(glm::vec3 const & View, glm::vec3 Normal, float const IndexOfRefraction)
+{
+	float iorRatio;
+
+	if (glm::dot(Normal, -View) < 0.f)
+	{
+		iorRatio = 1.f / IndexOfRefraction;
+	}
+	else
+	{
+		iorRatio = IndexOfRefraction / 1.f;
+		Normal = -Normal;
+	}
+
+	float const C1 = dot(View, Normal);
+	float const C2 = sqrt(1 - (iorRatio) * (1 - (C1 * C1)));
+
+	return glm::normalize((-View * iorRatio) + Normal * (iorRatio * C1 - C2));
+}

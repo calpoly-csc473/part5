@@ -23,15 +23,12 @@ public:
 	Object() = default;
 
 	void SetID(int const ID);
-
-	bool CastsShadows() const;
 	int GetID() const;
 
 	Material & GetMaterial();
 	Material const & GetMaterial() const;
 
 	virtual bool Intersect(Ray const & Ray, RayHitResults * const HitInformation) const = 0;
-
 	virtual std::string GetObjectType() const = 0;
 
 protected:
