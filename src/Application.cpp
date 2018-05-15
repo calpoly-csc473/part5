@@ -304,7 +304,7 @@ Scene * Application::LoadPovrayScene(const std::string & fileName)
 	for (const parser::Light & l : p.lights)
 	{
 		Light * light = new Light();
-		light->color = l.color;
+		light->color = glm::vec3(l.color.x, l.color.y, l.color.z);
 		light->position = l.position;
 		scene->AddLight(light);
 	}
