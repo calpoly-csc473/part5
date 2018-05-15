@@ -20,11 +20,9 @@ class Object
 
 public:
 
-	Object();
+	Object() = default;
 
-	void SetCastsShadows(bool const CastsShadows);
 	void SetID(int const ID);
-	void SetTransform(glm::mat4 const & transform);
 
 	bool CastsShadows() const;
 	int GetID() const;

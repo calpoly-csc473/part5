@@ -21,6 +21,11 @@ set(PARSER
 set(SOURCES
 	src/main.cpp
 	src/Application.cpp
+	src/Object.cpp
+	src/Pixel.cpp
+	src/RayTracer.cpp
+	src/Scene.cpp
+	src/Util.cpp
 )
 
 set(HEADERS
@@ -30,6 +35,7 @@ set(HEADERS
 	src/Light.hpp
 	src/Object.hpp
 	src/Params.hpp
+	src/Pixel.hpp
 	src/PixelContext.hpp
 	src/RayHitResults.hpp
 	src/Ray.hpp

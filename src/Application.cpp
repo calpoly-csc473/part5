@@ -1,6 +1,8 @@
 
 #include "Application.hpp"
 
+#include "RayTracer.hpp"
+
 #include <iostream>
 #include <string>
 #include <atomic>
@@ -54,9 +56,10 @@ void Application::RunCommands()
 	fileName = CommandArguments[2];
 
 	scene = new Scene();
+	rayTracer = new RayTracer();
 
-	params.WindowSize.x = 640;
-	params.WindowSize.y = 480;
+	params.imageSize.x = 640;
+	params.imageSize.y = 480;
 
 	std::cout << std::setiosflags(std::ios::fixed);
 	std::cout << std::setprecision(4);
@@ -82,15 +85,11 @@ void Application::RunCommands()
 		throw std::invalid_argument("Insufficient arguments.");
 	}
 
-	Params.WindowSize.X = std::stoi(CommandArguments[3]);
-	Params.WindowSize.Y = std::stoi(CommandArguments[4]);
+	params.imageSize.x = std::stoi(CommandArguments[3]);
+	params.imageSize.y = std::stoi(CommandArguments[4]);
 
-	Params.UseShading = true;
-	Params.UseShadows = true;
-
-	Params.BoundingVolumeHierarchy = false;
-	Params.UseSchlicks = false;
-	Params.UseBeers = false;
+	params.useShading = true;
+	params.useShadows = true;
 
 	if (Command == "render" || Command == "raycast")
 	{
@@ -99,8 +98,8 @@ void Application::RunCommands()
 		}
 		else if (Command == "raycast")
 		{
-			Params.UseShading = false;
-			Params.UseShadows = false;
+			params.useShading = false;
+			params.useShadows = false;
 		}
 
 		ParseExtraParams(5);
@@ -123,30 +122,30 @@ void Application::RunCommands()
 	int const Y = std::stoi(CommandArguments[6]);
 
 	ParseExtraParams(7);
-	Scene->SetParams(params);
+	scene->SetParams(params);
 	LoadPovrayScene();
 
 	if (Command == "pixelray")
 	{
-		ray3f const Ray = Scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), Scene->GetParams().WindowSize);
+		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), scene->GetParams().imageSize);
 
-		std::cout << "Pixel: [" << X << ", " << Y << "] Ray: " << Ray << std::endl;
+		std::cout << "Pixel: [" << X << ", " << Y << "] Ray: " << ray << std::endl;
 		return;
 	}
 	else if (Command == "firsthit")
 	{
-		ray3f const Ray = Scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), Scene->GetParams().WindowSize);
-		SRayHitResults const Results = Scene->GetRayHitResults(Scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), Scene->GetParams().WindowSize));
-		float const Intersection = Results.T;
-		CObject const * const Object = Results.Object;
+		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), scene->GetParams().imageSize);
+		RayHitResults const results = scene->GetRayHitResults(scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), scene->GetParams().imageSize));
+		float const intersection = results.t;
+		Object const * const object = results.object;
 
-		std::cout << "Pixel: [" << X << ", " << Y << "] Ray: " << Ray << std::endl;
+		std::cout << "Pixel: [" << X << ", " << Y << "] Ray: " << ray  << std::endl;
 
-		if (Object)
+		if (object)
 		{
-			std::cout << "T = " << Intersection << std::endl;
-			std::cout << "Object Type: " << Object->GetObjectType() << std::endl;
-			std::cout << "Color: " << Object->GetMaterial().Color << std::endl;
+			std::cout << "T = " << intersection << std::endl;
+			std::cout << "Object Type: " << object->GetObjectType() << std::endl;
+			std::cout << "Color: " << object->GetMaterial().color << std::endl;
 		}
 		else
 		{
@@ -156,20 +155,20 @@ void Application::RunCommands()
 	}
 	else if (Command == "pixelcolor")
 	{
-		SPixel const Pixel = Scene->CastRaysForPixel(glm::ivec2(X, Y));
-		ray3f const Ray = Scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), Scene->GetParams().WindowSize);
-		SRayHitResults const Results = Scene->GetRayHitResults(Scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), Scene->GetParams().WindowSize));
-		float const Intersection = Results.T;
-		CObject const * const Object = Results.Object;
+		Pixel const pixel = rayTracer->CastRaysForPixel(glm::ivec2(X, Y));
+		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), scene->GetParams().imageSize);
+		RayHitResults const Results = scene->GetRayHitResults(scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), params.imageSize));
+		float const intersection = Results.t;
+		Object const * const object = Results.object;
 
-		std::cout << "Pixel: [" << X << ", " << Y << "] Ray: " << Ray << std::endl;
+		std::cout << "Pixel: [" << X << ", " << Y << "] Ray: " << ray << std::endl;
 
-		if (Object)
+		if (object)
 		{
-			std::cout << "T = " << Intersection << std::endl;
-			std::cout << "Object Type: " << Object->GetObjectType() << std::endl;
+			std::cout << "T = " << intersection << std::endl;
+			std::cout << "Object Type: " << object->GetObjectType() << std::endl;
 			std::cout << "BRDF: " << "Blinn-Phong" << std::endl;
-			std::cout << "Color: " << Pixel << std::endl;
+			std::cout << "Color: " << pixel << std::endl;
 		}
 		else
 		{
@@ -179,12 +178,12 @@ void Application::RunCommands()
 	}
 	else if (Command == "printrays")
 	{
-		PrintRayInfo(Scene, X, Y, false);
+		PrintRayInfo(scene, X, Y, false);
 		return;
 	}
 	else if (Command == "pixeltrace")
 	{
-		PrintRayInfo(Scene, X, Y, true);
+		PrintRayInfo(scene, X, Y, true);
 		return;
 	}
 
@@ -197,87 +196,82 @@ void Application::ParseExtraParams(size_t const StartIndex)
 	std::string Remainder;
 	for (size_t i = StartIndex; i < CommandArguments.size(); ++ i)
 	{
-		string const & Arg = CommandArguments[i];
+		std::string const & Arg = CommandArguments[i];
 		if (Arg == "-altbrdf")
 		{
-			Params.UseCookTorrance = true;
+			params.useCookTorrance = true;
 		}
 		else if (Arg == "-normals")
 		{
-			Params.DebugNormals = true;
+			params.debugNormals = true;
 		}
 	}
 }
 
 void Application::RunCommandSceneInfo()
 {
-	Scene->SetParams(Params);
-	Factory->LoadPovrayScene(FileName);
+	scene->SetParams(params);
+	LoadPovrayScene();
 
-	CCamera const & Camera = Scene->GetCamera();
+	Camera const & camera = scene->GetCamera();
 
 	std::cout << "Camera:" << std::endl;
-	std::cout << "- Location: {" << Camera.GetPosition() << "}" << std::endl;
-	std::cout << "- Up: {" << Camera.GetUpVector() << "}" << std::endl;
-	std::cout << "- Right: {" << Camera.GetRightVector() << "}" << std::endl;
-	std::cout << "- Look at: {" << Camera.GetLookAt() << "}" << std::endl;
+	std::cout << "- Location: {" << camera.GetPosition() << "}" << std::endl;
+	std::cout << "- Up: {" << camera.GetUpVector() << "}" << std::endl;
+	std::cout << "- Right: {" << camera.GetRightVector() << "}" << std::endl;
+	std::cout << "- Look at: {" << camera.GetLookAt() << "}" << std::endl;
 	std::cout << std::endl;
 	std::cout << "---" << std::endl;
 	std::cout << std::endl;
 
-	std::cout << Scene->GetLights().size() << " light(s)" << std::endl;
-	for (size_t i = 0; i < Scene->GetLights().size(); ++ i)
+	std::cout << scene->GetLights().size() << " light(s)" << std::endl;
+	for (size_t i = 0; i < scene->GetLights().size(); ++ i)
 	{
 		std::cout << std::endl;
 		std::cout << "Light[" << i << "]:" << std::endl;
-		std::cout << "- Location: {" << Scene->GetLights()[i]->Position << "}" << std::endl;
-		std::cout << "- Color: {" << Scene->GetLights()[i]->Color << "}" << std::endl;
+		std::cout << "- Location: {" << scene->GetLights()[i]->position << "}" << std::endl;
+		std::cout << "- Color: {" << scene->GetLights()[i]->color << "}" << std::endl;
 	}
 
 	std::cout << std::endl;
 	std::cout << "---" << std::endl;
 	std::cout << std::endl;
 
-	std::cout << Scene->GetObjects().size() << " object(s)" << std::endl;
-	for (size_t i = 0; i < Scene->GetObjects().size(); ++ i)
+	std::cout << scene->GetObjects().size() << " object(s)" << std::endl;
+	for (size_t i = 0; i < scene->GetObjects().size(); ++ i)
 	{
 		std::cout << std::endl;
 		std::cout << "Object[" << i << "]:" << std::endl;
-		std::cout << "- Type: " << Scene->GetObjects()[i]->GetObjectType() << std::endl;
-		std::cout << Scene->GetObjects()[i]->GetObjectInfo();
+		std::cout << "- Type: " << scene->GetObjects()[i]->GetObjectType() << std::endl;
+		//std::cout << scene->GetObjects()[i]->GetObjectInfo();
 	}
 }
 
 void Application::DrawSceneThreaded()
 {
 	bool const UseThreads = true;
-	glm::ivec2 const ScreenSize = Params.WindowSize;
+	glm::ivec2 const ScreenSize = params.imageSize;
 
-	unsigned char * ImageBuffer = new unsigned char[ScreenSize.X * ScreenSize.Y * 4];
-	for (int x = 0; x < ScreenSize.X; ++ x)
+	unsigned char * ImageBuffer = new unsigned char[ScreenSize.x * ScreenSize.y * 4];
+	for (int x = 0; x < ScreenSize.x; ++ x)
 	{
-		for (int y = 0; y < ScreenSize.Y; ++ y)
+		for (int y = 0; y < ScreenSize.y; ++ y)
 		{
-			ImageBuffer[x * 4 + y * 4 * ScreenSize.X + 0] = 0;
-			ImageBuffer[x * 4 + y * 4 * ScreenSize.X + 1] = 0;
-			ImageBuffer[x * 4 + y * 4 * ScreenSize.X + 2] = 0;
-			ImageBuffer[x * 4 + y * 4 * ScreenSize.X + 3] = 0;
+			ImageBuffer[x * 4 + y * 4 * ScreenSize.x + 0] = 0;
+			ImageBuffer[x * 4 + y * 4 * ScreenSize.x + 1] = 0;
+			ImageBuffer[x * 4 + y * 4 * ScreenSize.x + 2] = 0;
+			ImageBuffer[x * 4 + y * 4 * ScreenSize.x + 3] = 0;
 		}
 	}
-	ion::CImage * Image = new ion::CImage(ImageBuffer, ScreenSize, 4);
 
 
 	/////////////////
 	// Scene Setup //
 	/////////////////
 
-	Scene->SetParams(Params);
-	Factory->LoadPovrayScene(FileName);
-
-	if (Params.BoundingVolumeHierarchy)
-	{
-		Scene->BuildBoundingVolumeHierarchy();
-	}
+	scene->SetParams(params);
+	LoadPovrayScene();
+	
 
 
 	///////////////////
@@ -285,35 +279,33 @@ void Application::DrawSceneThreaded()
 	///////////////////
 
 	static int const ThreadCount = 12;
-	int const PixelCount = ScreenSize.X * ScreenSize.Y;
+	int const PixelCount = ScreenSize.x * ScreenSize.y;
 
 	std::atomic<int> DoneCount;
-	std::atomic<int> CurrentPixel;
-	std::atomic<bool> Rendering;
+	std::atomic<int> currentPixel;
 
 	DoneCount = 0;
-	CurrentPixel = 0;
-	Rendering = true;
+	currentPixel = 0;
 
 	auto RenderKernel = [&](int const ThreadIndex)
 	{
-		while (Rendering)
+		while (true)
 		{
-			int Pixel = CurrentPixel ++;
+			int pixel = currentPixel ++;
 
-			if (Pixel >= PixelCount)
+			if (pixel >= PixelCount)
 			{
 				break;
 			}
 
-			int const X = Pixel / ScreenSize.Y;
-			int const Y = Pixel % ScreenSize.Y;
+			int const X = pixel / ScreenSize.y;
+			int const Y = pixel % ScreenSize.y;
 
-			SPixel p = Scene->CastRaysForPixel(glm::ivec2(X, Y));
-			ImageBuffer[X * 4 + Y * 4 * ScreenSize.X + 0] = p.Red;
-			ImageBuffer[X * 4 + Y * 4 * ScreenSize.X + 1] = p.Green;
-			ImageBuffer[X * 4 + Y * 4 * ScreenSize.X + 2] = p.Blue;
-			ImageBuffer[X * 4 + Y * 4 * ScreenSize.X + 3] = 255;
+			Pixel p = rayTracer->CastRaysForPixel(glm::ivec2(X, Y));
+			ImageBuffer[X * 4 + Y * 4 * ScreenSize.x + 0] = p.Red;
+			ImageBuffer[X * 4 + Y * 4 * ScreenSize.x + 1] = p.Green;
+			ImageBuffer[X * 4 + Y * 4 * ScreenSize.x + 2] = p.Blue;
+			ImageBuffer[X * 4 + Y * 4 * ScreenSize.x + 3] = 255;
 		}
 
 		DoneCount ++;
@@ -324,29 +316,20 @@ void Application::DrawSceneThreaded()
 			{
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			}
-#ifdef ION_RAYTRACER_DIAGNOSTICS
-			Log::Info("Traced %u rays", Scene->Diagnostics.RayCount);
-			Log::Info("Performed %u bounding volume collision checks", Scene->Diagnostics.BoundingVolumeCollision);
-			Log::Info("Performed %u sphere collision checks", Scene->Diagnostics.SphereCollision);
-#endif
 		}
 	};
 
-	vector<thread> Threads;
+	std::vector<std::thread> Threads;
 	for (int i = 0; i < ThreadCount; ++ i)
 	{
-		Threads.push_back(thread(RenderKernel, i));
+		Threads.push_back(std::thread(RenderKernel, i));
 	}
 	for (int i = 0; i < ThreadCount; ++ i)
 	{
 		Threads[i].join();
 	}
 
-	Rendering = false;
-	Image->FlipY();
-
-	// Image->Write(File::StripExtension(File) + ".png");
-	Image->Write("output.png");
+	//Image->Write("output.png");
 }
 
 void Application::PrintUsage()

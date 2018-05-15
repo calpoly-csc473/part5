@@ -7,19 +7,13 @@
 #include "Object.hpp"
 #include "Camera.hpp"
 #include "Light.hpp"
+#include "BRDF.hpp"
 
 #include "Params.hpp"
 #include "PixelContext.hpp"
 #include "RayTraceResults.hpp"
 #include "RayHitResults.hpp"
 
-
-
-struct LightingResults
-{
-	glm::vec3 Diffuse;
-	glm::vec3 Specular;
-};
 
 class Scene
 {
@@ -44,6 +38,8 @@ public:
 	const Camera & GetCamera() const;
 	Camera & GetCamera();
 
+	const BRDF * GetBRDF();
+
 	bool IsLightOccluded(const Object * const HitObject, glm::vec3 const & Point, glm::vec3 const & LightPosition, PixelContext::Iteration * CurrentIteration = nullptr) const;
 	RayHitResults GetRayHitResults(Ray const & Ray) const;
 
@@ -51,13 +47,9 @@ protected:
 
 	Params params;
 	Camera camera;
+	BRDF * brdf = nullptr;
 
-	std::vector<Object *> Objects;
-	std::vector<Light *> Lights;
-
-	const float ShadowRayEpsilon = 0.0001f;
-	const float ReflectionEpsilon = 0.001f;
-	const float RefractionEpsilon = 0.001f;
-	const float MonteCarloEpsilon = 0.001f;
+	std::vector<Object *> objects;
+	std::vector<Light *> lights;
 
 };

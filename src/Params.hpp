@@ -6,16 +6,16 @@
 
 struct Params
 {
-	glm::ivec2 WindowSize;
+	glm::ivec2 imageSize;
 
-	bool UseShading = true;
-	bool UseShadows = true;
+	bool useShading = true;
+	bool useShadows = true;
+	bool useCookTorrance = false;
 
-	bool UseReflections = true;
-	int ReflectDepth = 5;
+	bool useReflections = true;
+	bool useRefractions = true;
 
-	bool UseRefractions = true;
-	int RefractDepth = 5;
+	int recursiveDepth = 6;
 
-	bool DebugNormals = false;
+	bool debugNormals = false;
 };

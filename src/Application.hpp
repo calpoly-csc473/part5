@@ -8,6 +8,8 @@
 #include "Params.hpp"
 
 
+class RayTracer;
+
 class Application
 {
 
@@ -21,6 +23,7 @@ protected:
 	void RunCommands();
 	void ParseExtraParams(size_t const StartIndex);
 	void LoadPovrayScene();
+	void PrintRayInfo(Scene * scene, int const x, int const y, bool const decoration);
 
 	void RunCommandSceneInfo();
 	void DrawSceneThreaded();
@@ -30,6 +33,7 @@ protected:
 	std::vector<std::string> CommandArguments;
 
 	Scene * scene = nullptr;
+	RayTracer * rayTracer = nullptr;
 
 	Params params;
 	std::string fileName;

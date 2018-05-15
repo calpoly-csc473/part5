@@ -1,90 +1,69 @@
 
 #include "RayTracer.hpp"
-#include "Scene.h"
-
-using namespace ion;
+#include "Scene.hpp"
 
 
-SPixel RayTracer::CastRaysForPixel(vec2i const & Pixel) const
+Pixel RayTracer::CastRaysForPixel(glm::ivec2 const & pixel) const
 {
-	color3f Color = 0;
+	glm::vec3 color;
 
-	for (int i = 0; i < Params.SuperSampling; ++ i)
+	Ray const ray = scene->GetCamera().GetPixelRay(pixel, params.imageSize);
+
+	if (context)
 	{
-		for (int j = 0; j < Params.SuperSampling; ++ j)
-		{
-			ray3f const Ray = Camera.GetPixelRay(Pixel, Params.WindowSize, vec2i(i, j), Params.SuperSampling);
-
-			SRecursiveDepth Depth;
-			Depth.ReflectDepth = Params.ReflectDepth;
-			Depth.RefractDepth = Params.RefractDepth;
-			Depth.GlobalIlluminationDepth = Params.GlobalIlluminationDepth;
-
-			if (Context)
-			{
-				Context->Iterations.push_back(new SPixelContext::SIteration());
-				Context->Iterations.back()->Type = SPixelContext::EIterationType::Primary;
-				Context->Iterations.back()->Parent = nullptr;
-			}
-			Color += CastRay(Ray, Depth).ToColor();
-		}
+		context->iterations.push_back(new PixelContext::Iteration());
+		context->iterations.back()->type = PixelContext::IterationType::Primary;
+		context->iterations.back()->parent = nullptr;
 	}
+	color += CastRay(ray, params.recursiveDepth).ToColor();
 
-	Color /= (float) Sq(Params.SuperSampling);
-
-	return SPixel(Color);
+	return Pixel(color);
 }
 
-SRayTraceResults RayTracer::CastRay(ray3f const & Ray, SRecursiveDepth const Depth) const
+RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 {
-	SRayTraceResults Results;
+	RayTraceResults Results;
 
-	SRayHitResults const HitResults = GetRayHitResults(Ray);
-	CObject const * HitObject = HitResults.Object;
+	RayHitResults const HitResults = scene->GetRayHitResults(ray);
+	Object const * HitObject = HitResults.object;
 
-	SPixelContext::SIteration * ContextIteration = nullptr;
+	PixelContext::Iteration * ContextIteration = nullptr;
 
-	if (Context)
+	if (context)
 	{
-		ContextIteration = Context->Iterations.back();
-		ContextIteration->Ray = Ray;
+		ContextIteration = context->iterations.back();
+		ContextIteration->ray = ray;
 	}
 
 	if (HitObject)
 	{
-		SMaterial const & Material = HitObject->GetMaterial();
+		Material const & material = HitObject->GetMaterial();
 
 		/////////////
 		// Vectors //
 		/////////////
 
-		vec3f const Point = Results.IntersectionPoint = HitResults.Point;
-		vec3f const View = Ray.Direction.GetNormalized() * -1.f;
-		vec3f const SurfaceNormal = HitResults.Normal.GetNormalized();
+		glm::vec3 const Point = Results.IntersectionPoint = HitResults.point;
+		glm::vec3 const View = glm::normalize(ray.direction) * -1.f;
+		glm::vec3 const SurfaceNormal = glm::normalize(HitResults.normal);
 
-		vec3f Normal = SurfaceNormal;
+		glm::vec3 Normal = SurfaceNormal;
 		bool Entering = true;
-		if (Dot(Normal, View) < 0.0)
+		if (glm::dot(Normal, View) < 0.0)
 		{
 			Normal = -Normal;
 			Entering = false;
 		}
-		vec3f const Reflection = Normalize(Normal * Dot(View, Normal) * 2.f - View);
-
-		float FresnelReflectance = 0;
-		if (Params.UseSchlicks)
-		{
-			FresnelReflectance = CRayTracerMath::SchlicksApproximation(HitObject->GetMaterial().IndexOfRefraction, Normal, View);
-		}
+		glm::vec3 const Reflection = glm::normalize(Normal * glm::dot(View, Normal) * 2.f - View);
 
 
 		///////////////////
 		// Contributions //
 		///////////////////
 
-		float const LocalContribution = (1.f - Material.Filter) * (1.f - Material.Reflection);
-		float const TransmissionContribution = (Material.Filter) * (1.f - FresnelReflectance);
-		float ReflectionContribution = (1.f - Material.Filter) * (Material.Reflection) + (Material.Filter) * (FresnelReflectance);
+		float const LocalContribution = (1.f - material.filter) * (1.f - material.finish.reflection);
+		float const TransmissionContribution = (material.filter);
+		float ReflectionContribution = (1.f - material.filter) * (material.finish.reflection) + (material.filter);
 
 
 		///////////////////
@@ -93,24 +72,15 @@ SRayTraceResults RayTracer::CastRay(ray3f const & Ray, SRecursiveDepth const Dep
 
 		Results.Ambient = LocalContribution * GetAmbientResults(HitObject, Point, Normal, Depth);
 
-		for (auto Light : Lights)
+		for (auto Light : scene->GetLights())
 		{
-			bool const InShadow = IsLightOccluded(HitObject, Point, Light->Position, ContextIteration);
+			bool const InShadow = scene->IsLightOccluded(HitObject, Point, Light->position, ContextIteration);
 			if (! InShadow)
 			{
-				SLightingResults LightingResults = GetLightingResults(Light, HitObject->GetMaterial(), Point, View, Normal);
+				LightingResults LightingResults = GetLightingResults(Light, HitObject->GetMaterial(), Point, View, Normal);
 				Results.Diffuse += LocalContribution * LightingResults.Diffuse;
 				Results.Specular += LocalContribution * LightingResults.Specular;
 			}
-		}
-
-		if (Params.UseAmbientOcclusion)
-		{
-			float const AO = CalculateAmbientOcclusion(Point, Normal);
-
-			Results.Ambient *= AO;
-			Results.Diffuse *= AO;
-			Results.Specular *= AO;
 		}
 
 
@@ -118,22 +88,22 @@ SRayTraceResults RayTracer::CastRay(ray3f const & Ray, SRecursiveDepth const Dep
 		// Refraction //
 		////////////////
 
-		if (Params.UseRefractions && TransmissionContribution > 0.f)
+		if (params.useRefractions && TransmissionContribution > 0.f)
 		{
-			vec3f const RefractionVector = CRayTracerMath::CalculateRefractionVector(View, SurfaceNormal, Material.IndexOfRefraction);
+			glm::vec3 const refractionVector = CalculateRefractionVector(View, SurfaceNormal, material.finish.ior);
 
-			if (std::isnan(RefractionVector.X))
+			if (std::isnan(refractionVector.x) || std::isnan(refractionVector.y) || std::isnan(refractionVector.z))
 			{
-				ReflectionContribution = (1.f - Material.Filter) * (Material.Reflection) + (Material.Filter);
+				ReflectionContribution = (1.f - material.filter) * (material.finish.reflection) + (material.filter);
 				if (ContextIteration)
 				{
-					ContextIteration->ExtraInfo += " total-internal-reflection";
+					ContextIteration->extraInfo += " total-internal-reflection";
 				}
 			}
 			else
 			{
-				color3f const TransmissionColor = GetRefractionResults(Material, Point, RefractionVector, Entering, Depth, ContextIteration);
-				Results.Refraction = Material.Filter * TransmissionColor;
+				glm::vec3 const transmissionColor = GetRefractionResults(material, Point, refractionVector, Entering, Depth, ContextIteration);
+				Results.Refraction = material.filter * transmissionColor;
 			}
 		}
 
@@ -142,27 +112,27 @@ SRayTraceResults RayTracer::CastRay(ray3f const & Ray, SRecursiveDepth const Dep
 		// Reflections //
 		/////////////////
 
-		if (Params.UseReflections && ReflectionContribution > 0.f)
+		if (params.useReflections && ReflectionContribution > 0.f)
 		{
-			color3f const ReflectionColor = Material.Color * GetReflectionResults(Point, Reflection, Depth, ContextIteration);
+			glm::vec3 const ReflectionColor = material.color * GetReflectionResults(Point, Reflection, Depth, ContextIteration);
 			Results.Reflection = ReflectionContribution * ReflectionColor;
 		}
 
 		if (ContextIteration)
 		{
-			ContextIteration->HitObject = HitResults.Object;
-			ContextIteration->HitNormal = HitResults.Normal;
-			ContextIteration->HitTime = HitResults.T;
-			ContextIteration->RayTraceResults = Results;
-			ContextIteration->Contributions = vec3f(LocalContribution, ReflectionContribution, TransmissionContribution);
+			ContextIteration->hitObject = HitResults.object;
+			ContextIteration->hitNormal = HitResults.normal;
+			ContextIteration->hitTime = HitResults.t;
+			ContextIteration->results = Results;
+			ContextIteration->contributions = glm::vec3(LocalContribution, ReflectionContribution, TransmissionContribution);
 		}
 
-		if (Params.DebugNormals)
+		if (params.debugNormals)
 		{
-			Results.Ambient = 0;
-			Results.Specular = 0;
-			Results.Reflection = 0;
-			Results.Refraction = 0;
+			Results.Ambient = glm::vec3(0.f);
+			Results.Specular = glm::vec3(0.f);
+			Results.Reflection = glm::vec3(0.f);
+			Results.Refraction = glm::vec3(0.f);
 
 			Results.Diffuse = Normal / 2.f + 0.5f;
 		}
@@ -171,104 +141,91 @@ SRayTraceResults RayTracer::CastRay(ray3f const & Ray, SRecursiveDepth const Dep
 	return Results;
 }
 
-color3f RayTracer::GetAmbientResults(CObject const * const HitObject, vec3f const & Point, vec3f const & Normal, SRecursiveDepth Depth) const
+glm::vec3 RayTracer::GetAmbientResults(const Object * const hitObject, glm::vec3 const & Point, glm::vec3 const & Normal, int Depth) const
 {
-	if (Params.UseShading)
+	if (params.useShading)
 	{
-		return HitObject->GetMaterial().Ambient * HitObject->GetMaterial().Color;
+		return hitObject->GetMaterial().finish.ambient * hitObject->GetMaterial().color;
 	}
 	else
 	{
-		return 0;
+		return glm::vec3(0.f);
 	}
 }
 
-SLightingResults RayTracer::GetLightingResults(CLight const * const Light, SMaterial const & Material, vec3f const & Point, vec3f const & View, vec3f const & Normal) const
+LightingResults RayTracer::GetLightingResults(Light const * const light, Material const & material, glm::vec3 const & Point, glm::vec3 const & View, glm::vec3 const & Normal) const
 {
-	SLightingResults Results;
+	LightingResults Results;
 
-	if (Params.UseShading)
+	if (params.useShading)
 	{
-		vec3f const LightPosition = Light->Position;
-		vec3f const LightVector = (LightPosition - Point).GetNormalized();
+		SurfaceVectors surface;
+		surface.normal = Normal;
+		surface.view = View;
+		surface.light = glm::normalize(light->position - Point);
 
-		vec3f const Diffuse = BRDF->CalculateDiffuse(Material, LightVector, View, Normal);
-		vec3f const Specular = BRDF->CalculateSpecular(Material, LightVector, View, Normal);
+		glm::vec3 const Diffuse = scene->GetBRDF()->CalculateDiffuse(material, surface);
+		glm::vec3 const Specular = scene->GetBRDF()->CalculateSpecular(material, surface);
 
-		Results.Diffuse = Light->Color * Material.Diffuse * Material.Color * Diffuse;
-		Results.Specular = Light->Color * Material.Specular * Material.Color * Specular;
+		Results.Diffuse = light->color * material.finish.diffuse * material.color * Diffuse;
+		Results.Specular = light->color * material.finish.specular * material.color * Specular;
 	}
 	else
 	{
-		Results.Diffuse = Material.Color;
+		Results.Diffuse = material.color;
 	}
 
 	return Results;
 }
 
-color3f RayTracer::GetReflectionResults(vec3f const & Point, vec3f const & Reflection, SRecursiveDepth Depth, SPixelContext::SIteration * CurrentIteration) const
+glm::vec3 RayTracer::GetReflectionResults(glm::vec3 const & Point, glm::vec3 const & Reflection, int Depth, PixelContext::Iteration * CurrentIteration) const
 {
-	if (Depth.ReflectDepth > 0)
+	if (Depth > 0)
 	{
-		if (Context)
+		if (context)
 		{
-			Context->Iterations.push_back(new SPixelContext::SIteration());
-			Context->Iterations.back()->Type = SPixelContext::EIterationType::Reflection;
-			Context->Iterations.back()->Parent = CurrentIteration;
+			context->iterations.push_back(new PixelContext::Iteration());
+			context->iterations.back()->type = PixelContext::IterationType::Reflection;
+			context->iterations.back()->parent = CurrentIteration;
 		}
 
-		Depth.ReflectDepth --;
-		return CastRay(ray3f(Point + ReflectionEpsilon * Reflection, Reflection), Depth).ToColor();
+		return CastRay(Ray(Point + reflectionEpsilon * Reflection, Reflection), Depth - 1).ToColor();
 	}
 
-	return 0;
+	return glm::vec3(0.f);
 }
 
-color3f RayTracer::GetRefractionResults(SMaterial const & Material, vec3f const & Point, vec3f const & Refraction, bool const Entering, SRecursiveDepth Depth, SPixelContext::SIteration * CurrentIteration) const
+glm::vec3 RayTracer::GetRefractionResults(Material const & Material, glm::vec3 const & Point, glm::vec3 const & Refraction, bool const Entering, int const Depth, PixelContext::Iteration * CurrentIteration) const
 {
-	if (Depth.RefractDepth > 0)
+	if (Depth > 0)
 	{
-		if (Context)
+		if (context)
 		{
-			Context->Iterations.push_back(new SPixelContext::SIteration());
-			Context->Iterations.back()->Type = SPixelContext::EIterationType::Refraction;
-			Context->Iterations.back()->Parent = CurrentIteration;
+			context->iterations.push_back(new PixelContext::Iteration());
+			context->iterations.back()->type = PixelContext::IterationType::Refraction;
+			context->iterations.back()->parent = CurrentIteration;
 
 			if (Entering)
 			{
-				Context->Iterations.back()->ExtraInfo += " into-object";
+				context->iterations.back()->extraInfo += " into-object";
 			}
 			else
 			{
-				Context->Iterations.back()->ExtraInfo += " into-air";
+				context->iterations.back()->extraInfo += " into-air";
 			}
 		}
 
-		Depth.RefractDepth --;
-		SRayTraceResults const Results = CastRay(ray3f(Point + RefractionEpsilon * Refraction, Refraction), Depth);
+		RayTraceResults const results = CastRay(Ray(Point + refractionEpsilon * Refraction, Refraction), Depth - 1);
 
 		if (! Entering)
 		{
-			return Results.ToColor();
+			return results.ToColor();
 		}
 		else
 		{
-			if (Params.UseBeers)
-			{
-				// Beer's Law
-				float const Distance = Length(Point - Results.IntersectionPoint);
-
-				color3f const Absorbance = (color3f(1.f) - Material.Color) * 0.15f * -Distance;
-				color3f const Attenuation = color3f(expf(Absorbance.Red), expf(Absorbance.Green), expf(Absorbance.Blue));
-
-				return Results.ToColor() * Attenuation;
-			}
-			else
-			{
-				return Results.ToColor() * Material.Color;
-			}
+			return results.ToColor() * Material.color;
 		}
 	}
 
-	return 0;
+	return glm::vec3(0.f);
 }

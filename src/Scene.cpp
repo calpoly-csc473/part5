@@ -2,60 +2,55 @@
 #include "Scene.hpp"
 
 
-void Scene::SetDebugContext(SPixelContext * Context)
+Object * Scene::AddObject(Object * object)
 {
-	this->Context = Context;
+	objects.push_back(object);
+	object->SetID((int) objects.size());
+	return object;
 }
 
-CObject * Scene::AddObject(CObject * Object)
+Light * Scene::AddLight(Light * light)
 {
-	Objects.push_back(Object);
-	Object->SetID((uint) Objects.size());
-	return Object;
+	lights.push_back(light);
+	return light;
 }
 
-CLight * Scene::AddLight(CLight * Light)
+std::vector<Object *> & Scene::GetObjects()
 {
-	Lights.push_back(Light);
-	return Light;
+	return objects;
 }
 
-std::vector<CObject *> & Scene::GetObjects()
+std::vector<Light *> & Scene::GetLights()
 {
-	return Objects;
+	return lights;
 }
 
-std::vector<CLight *> & Scene::GetLights()
+void Scene::SetParams(Params const & params)
 {
-	return Lights;
-}
+	this->params = params;
+	camera.params = params;
 
-void Scene::SetParams(SSceneParams const & params)
-{
-	Params = params;
-	Camera.Params = params;
-
-	if (Params.UseCookTorrance)
+	if (params.useCookTorrance)
 	{
-		BRDF = new CCookTorranceBRDF();
+		//brdf = new CCookTorranceBRDF();
 	}
 	else
 	{
-		BRDF = new CBlinnPhongBRDF();
+		//brdf = new CBlinnPhongBRDF();
 	}
 }
 
-SSceneParams const & Scene::GetParams() const
+Params const & Scene::GetParams() const
 {
-	return Params;
+	return params;
 }
 
-CCamera const & Scene::GetCamera() const
+Camera const & Scene::GetCamera() const
 {
-	return Camera;
+	return camera;
 }
 
-CCamera & Scene::GetCamera()
+Camera & Scene::GetCamera()
 {
-	return Camera;
+	return camera;
 }
