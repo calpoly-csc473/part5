@@ -1,5 +1,7 @@
 
 #include "Scene.hpp"
+#include "BlinnPhongBRDF.hpp"
+#include "CookTorranceBRDF.hpp"
 
 
 Object * Scene::AddObject(Object * object)
@@ -28,15 +30,14 @@ std::vector<Light *> & Scene::GetLights()
 void Scene::SetParams(Params const & params)
 {
 	this->params = params;
-	camera.params = params;
 
 	if (params.useCookTorrance)
 	{
-		//brdf = new CCookTorranceBRDF();
+		brdf = new CookTorranceBRDF();
 	}
 	else
 	{
-		//brdf = new CBlinnPhongBRDF();
+		brdf = new BlinnPhongBRDF();
 	}
 }
 
@@ -60,7 +61,7 @@ const BRDF * Scene::GetBRDF()
 	return brdf;
 }
 
-bool Scene::IsLightOccluded(Object const * const HitObject, glm::vec3 const & Point, glm::vec3 const & LightPosition, PixelContext::Iteration * CurrentIteration) const
+bool Scene::IsLightOccluded(const Object * const HitObject, glm::vec3 const & Point, glm::vec3 const & LightPosition, PixelContext::Iteration * CurrentIteration) const
 {
 	const float shadowRayEpsilon = 0.0001f;
 

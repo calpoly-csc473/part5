@@ -26,8 +26,6 @@ public:
 	static glm::vec2 PixelToView(glm::ivec2 const & Pixel, glm::ivec2 const & ScreenSize);
 	Ray GetPixelRay(glm::ivec2 const & Pixel, glm::ivec2 const & ScreenSize) const;
 
-	Params params;
-
 protected:
 
 	glm::vec3 Position = glm::vec3(0, 0, 0);

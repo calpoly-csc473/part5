@@ -19,15 +19,19 @@ set(PARSER
 )
 
 set(SOURCES
-	src/main.cpp
 	src/Application.cpp
 	src/BlinnPhongBRDF.cpp
 	src/Camera.cpp
 	src/CookTorranceBRDF.cpp
+	src/main.cpp
 	src/Object.cpp
 	src/Pixel.cpp
+	src/Plane.cpp
 	src/RayTracer.cpp
 	src/Scene.cpp
+	src/SceneInfo.cpp
+	src/Sphere.cpp
+	src/Triangle.cpp
 	src/Util.cpp
 )
 
@@ -42,11 +46,15 @@ set(HEADERS
 	src/Params.hpp
 	src/Pixel.hpp
 	src/PixelContext.hpp
+	src/Plane.hpp
 	src/RayHitResults.hpp
 	src/Ray.hpp
 	src/RayTraceResults.hpp
 	src/RayTracer.hpp
 	src/Scene.hpp
+	src/SceneInfo.hpp
+	src/Sphere.hpp
+	src/Triangle.hpp
 	src/Util.hpp
 )
 
@@ -55,3 +63,6 @@ add_library(parser ${PARSER})
 add_executable(raytrace ${SOURCES} ${HEADERS})
 target_include_directories(raytrace PUBLIC "lib/")
 target_link_libraries(raytrace parser)
+
+find_package(Threads)
+target_link_libraries(raytrace ${CMAKE_THREAD_LIBS_INIT})

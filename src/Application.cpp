@@ -3,6 +3,11 @@
 
 #include "RayTracer.hpp"
 #include "Scene.hpp"
+#include "SceneInfo.hpp"
+
+#include "Sphere.hpp"
+#include "Plane.hpp"
+#include "Triangle.hpp"
 
 #include <parser/Tokenizer.hpp>
 #include <parser/Parser.hpp>
@@ -76,7 +81,7 @@ void Application::RunCommands()
 
 	if (Command == "sceneinfo")
 	{
-		RunCommandSceneInfo();
+		SceneInfo::RunCommand(fileName);
 		return;
 	}
 
@@ -238,49 +243,52 @@ void Application::LoadPovrayScene()
 		std::cerr << "exception: " << e.what() << std::endl;
 		throw std::runtime_error("povray scene could not be parsed");
 	}
+
+	scene->GetCamera().SetPosition(p.camera.location);
+	scene->GetCamera().SetLookAt(p.camera.look_at);
+	scene->GetCamera().SetUpVector(p.camera.up);
+	scene->GetCamera().SetRightVector(p.camera.right);
+
+	for (size_t i = 0; i < p.objects.size(); ++ i)
+	{
+		const parser::Object & o = p.objects[i];
+		Object * object = nullptr;
+
+		switch (o.type)
+		{
+		case parser::Object::Type::Sphere:
+			object = new Sphere(o.v1, o.s1);
+			break;
+
+		case parser::Object::Type::Plane:
+			object = new Plane(o.v1, o.s1);
+			break;
+
+		case parser::Object::Type::Triangle:
+			object = new Triangle(o.v1, o.v2, o.v3);
+			break;
+
+		case parser::Object::Type::Box:
+			std::cerr << "Box objects not supported." << std::endl;
+			break;
+
+		case parser::Object::Type::Cone:
+			std::cerr << "Cone objects not supported." << std::endl;
+			break;
+		}
+
+		if (object)
+		{
+			object->GetMaterial().finish = o.attributes.finish;
+			object->GetMaterial().color = glm::vec3(o.attributes.pigment.x, o.attributes.pigment.y, o.attributes.pigment.z);
+			object->GetMaterial().filter = o.attributes.pigment.w;
+			scene->AddObject(object);
+		}
+	}
 }
 
 void Application::PrintRayInfo(Scene * scene, int const x, int const y, bool const decoration)
 {
-}
-
-void Application::RunCommandSceneInfo()
-{
-	scene->SetParams(params);
-	LoadPovrayScene();
-
-	Camera const & camera = scene->GetCamera();
-
-	std::cout << "Camera:" << std::endl;
-	std::cout << "- Location: {" << camera.GetPosition() << "}" << std::endl;
-	std::cout << "- Up: {" << camera.GetUpVector() << "}" << std::endl;
-	std::cout << "- Right: {" << camera.GetRightVector() << "}" << std::endl;
-	std::cout << "- Look at: {" << camera.GetLookAt() << "}" << std::endl;
-	std::cout << std::endl;
-	std::cout << "---" << std::endl;
-	std::cout << std::endl;
-
-	std::cout << scene->GetLights().size() << " light(s)" << std::endl;
-	for (size_t i = 0; i < scene->GetLights().size(); ++ i)
-	{
-		std::cout << std::endl;
-		std::cout << "Light[" << i << "]:" << std::endl;
-		std::cout << "- Location: {" << scene->GetLights()[i]->position << "}" << std::endl;
-		std::cout << "- Color: {" << scene->GetLights()[i]->color << "}" << std::endl;
-	}
-
-	std::cout << std::endl;
-	std::cout << "---" << std::endl;
-	std::cout << std::endl;
-
-	std::cout << scene->GetObjects().size() << " object(s)" << std::endl;
-	for (size_t i = 0; i < scene->GetObjects().size(); ++ i)
-	{
-		std::cout << std::endl;
-		std::cout << "Object[" << i << "]:" << std::endl;
-		std::cout << "- Type: " << scene->GetObjects()[i]->GetObjectType() << std::endl;
-		//std::cout << scene->GetObjects()[i]->GetObjectInfo();
-	}
 }
 
 void Application::DrawSceneThreaded()
@@ -307,7 +315,7 @@ void Application::DrawSceneThreaded()
 
 	scene->SetParams(params);
 	LoadPovrayScene();
-	
+
 
 
 	///////////////////
