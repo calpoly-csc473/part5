@@ -27,6 +27,7 @@ set(SOURCES
 	src/Object.cpp
 	src/Pixel.cpp
 	src/Plane.cpp
+	src/RayInfo.cpp
 	src/RayTracer.cpp
 	src/Renderer.cpp
 	src/Scene.cpp
@@ -50,6 +51,7 @@ set(HEADERS
 	src/Plane.hpp
 	src/RayHitResults.hpp
 	src/Ray.hpp
+	src/RayInfo.hpp
 	src/RayTraceResults.hpp
 	src/RayTracer.hpp
 	src/Renderer.hpp
