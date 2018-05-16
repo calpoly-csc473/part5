@@ -1,4 +1,8 @@
 
+// Copyright (C) 2018 Ian Dunn
+// For conditions of distribution and use, see the LICENSE file
+
+
 #include "Triangle.hpp"
 
 #include <glm/gtc/epsilon.hpp>
