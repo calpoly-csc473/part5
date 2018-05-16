@@ -8,7 +8,7 @@
 #include <stb/stb_image_write.h>
 
 
-void Renderer::DrawThreaded(RayTracer * rayTracer, Scene * scene)
+void Renderer::DrawThreaded(RayTracer * rayTracer)
 {
 	glm::ivec2 const imageSize = rayTracer->GetParams().imageSize;
 	unsigned char * imageBuffer = new unsigned char[imageSize.x * imageSize.y * 4]();

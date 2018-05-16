@@ -24,7 +24,6 @@ protected:
 	void PrintUsage();
 	void RunCommands();
 	void ParseExtraParams(size_t const StartIndex);
-	void PrintRayInfo(Scene * scene, int const x, int const y, bool const decoration);
 
 	static Scene * LoadPovrayScene(const std::string & fileName);
 
