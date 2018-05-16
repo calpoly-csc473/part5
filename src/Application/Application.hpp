@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-#include "Scene.hpp"
-#include "Params.hpp"
+#include <Scene\Scene.hpp>
+#include <RayTracer\Params.hpp>
 
 
 class RayTracer;

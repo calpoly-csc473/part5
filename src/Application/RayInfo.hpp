@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include "RayTracer.hpp"
-#include "Scene.hpp"
+#include <Scene\Scene.hpp>
+#include <RayTracer\RayTracer.hpp>
 
 
 class RayInfo

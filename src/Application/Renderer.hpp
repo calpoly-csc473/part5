@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "RayTracer.hpp"
+#include <RayTracer\RayTracer.hpp>
 
 
 class Renderer

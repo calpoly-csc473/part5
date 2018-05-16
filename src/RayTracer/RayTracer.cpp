@@ -1,9 +1,9 @@
 
 #include "RayTracer.hpp"
 
-#include "Scene.hpp"
-#include "BlinnPhongBRDF.hpp"
-#include "CookTorranceBRDF.hpp"
+#include <Scene/Scene.hpp>
+#include <Shading/BlinnPhongBRDF.hpp>
+#include <Shading/CookTorranceBRDF.hpp>
 
 
 RayTracer::RayTracer(Scene * scene)

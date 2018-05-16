@@ -4,12 +4,12 @@
 #include "Renderer.hpp"
 #include "RayInfo.hpp"
 
-#include "RayTracer.hpp"
-#include "Scene.hpp"
+#include <RayTracer/RayTracer.hpp>
+#include <Scene/Scene.hpp>
 
-#include "Sphere.hpp"
-#include "Plane.hpp"
-#include "Triangle.hpp"
+#include <Objects/Sphere.hpp>
+#include <Objects/Plane.hpp>
+#include <Objects/Triangle.hpp>
 
 #include <parser/Tokenizer.hpp>
 #include <parser/Parser.hpp>

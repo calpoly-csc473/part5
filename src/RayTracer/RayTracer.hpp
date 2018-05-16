@@ -3,14 +3,14 @@
 
 #include <glm/glm.hpp>
 
-#include "BRDF.hpp"
+#include <Shading/BRDF.hpp>
+
+#include <Scene/Object.hpp>
+#include <Scene/Camera.hpp>
+#include <Scene/Light.hpp>
+#include <Scene/Scene.hpp>
+
 #include "PixelContext.hpp"
-
-#include "Object.hpp"
-#include "Camera.hpp"
-#include "Light.hpp"
-
-#include "Scene.hpp"
 #include "Params.hpp"
 #include "Pixel.hpp"
 #include "PixelContext.hpp"

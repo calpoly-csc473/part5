@@ -19,46 +19,46 @@ set(PARSER
 )
 
 set(SOURCES
-	src/Application.cpp
-	src/BlinnPhongBRDF.cpp
-	src/Camera.cpp
-	src/CookTorranceBRDF.cpp
-	src/main.cpp
-	src/Object.cpp
-	src/Pixel.cpp
-	src/Plane.cpp
-	src/RayInfo.cpp
-	src/RayTracer.cpp
-	src/Renderer.cpp
-	src/Scene.cpp
-	src/SceneInfo.cpp
-	src/Sphere.cpp
-	src/Triangle.cpp
-	src/Util.cpp
+	src/Application/Application.cpp
+	src/Application/main.cpp
+	src/Application/RayInfo.cpp
+	src/Application/Renderer.cpp
+	src/Application/SceneInfo.cpp
+	src/Objects/Plane.cpp
+	src/Objects/Sphere.cpp
+	src/Objects/Triangle.cpp
+	src/RayTracer/Pixel.cpp
+	src/RayTracer/RayTracer.cpp
+	src/RayTracer/Util.cpp
+	src/Scene/Camera.cpp
+	src/Scene/Object.cpp
+	src/Scene/Scene.cpp
+	src/Shading/BlinnPhongBRDF.cpp
+	src/Shading/CookTorranceBRDF.cpp
 )
 
 set(HEADERS
-	src/Application.hpp
-	src/BlinnPhongBRDF.hpp
-	src/BRDF.hpp
-	src/Camera.hpp
-	src/CookTorranceBRDF.hpp
-	src/Light.hpp
-	src/Object.hpp
-	src/Params.hpp
-	src/Pixel.hpp
-	src/PixelContext.hpp
-	src/Plane.hpp
-	src/Ray.hpp
-	src/RayInfo.hpp
-	src/RayTraceResults.hpp
-	src/RayTracer.hpp
-	src/Renderer.hpp
-	src/Scene.hpp
-	src/SceneInfo.hpp
-	src/Sphere.hpp
-	src/Triangle.hpp
-	src/Util.hpp
+	src/Application/Application.hpp
+	src/Application/RayInfo.hpp
+	src/Application/Renderer.hpp
+	src/Application/SceneInfo.hpp
+	src/Objects/Plane.hpp
+	src/Objects/Sphere.hpp
+	src/Objects/Triangle.hpp
+	src/RayTracer/Params.hpp
+	src/RayTracer/Pixel.hpp
+	src/RayTracer/PixelContext.hpp
+	src/RayTracer/Ray.hpp
+	src/RayTracer/RayTracer.hpp
+	src/RayTracer/RayTraceResults.hpp
+	src/RayTracer/Util.hpp
+	src/Scene/Camera.hpp
+	src/Scene/Light.hpp
+	src/Scene/Object.hpp
+	src/Scene/Scene.hpp
+	src/Shading/BlinnPhongBRDF.hpp
+	src/Shading/BRDF.hpp
+	src/Shading/CookTorranceBRDF.hpp
 )
 
 add_library(parser ${PARSER})
@@ -66,6 +66,7 @@ add_library(parser ${PARSER})
 add_executable(raytrace ${SOURCES} ${HEADERS})
 target_include_directories(raytrace PUBLIC "ext/")
 target_include_directories(raytrace PUBLIC "lib/")
+target_include_directories(raytrace PUBLIC "src/")
 target_link_libraries(raytrace parser)
 
 find_package(Threads)

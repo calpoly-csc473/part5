@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <parser/Objects.hpp>
-#include "Ray.hpp"
+#include <RayTracer/Ray.hpp>
 
 
 struct Material

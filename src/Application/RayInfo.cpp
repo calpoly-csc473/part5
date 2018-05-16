@@ -5,7 +5,7 @@
 #include <vector>
 #include <map>
 
-#include "PixelContext.hpp"
+#include <RayTracer/PixelContext.hpp>
 
 
 struct IterationTreeNode

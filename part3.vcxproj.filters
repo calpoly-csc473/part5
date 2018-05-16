@@ -19,44 +19,8 @@
     <Filter Include="Application">
       <UniqueIdentifier>{40a781af-9e9d-4286-93ff-7987b74096bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utilities">
-      <UniqueIdentifier>{0085ff45-8f5b-4f61-85ae-47bbd2c8a53a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Application.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BlinnPhongBRDF.cpp">
-      <Filter>Shading</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CookTorranceBRDF.cpp">
-      <Filter>Shading</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Plane.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Triangle.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Sphere.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Object.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SceneInfo.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RayTracer.cpp">
-      <Filter>RayTracer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Camera.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="lib\parser\Parser.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
@@ -66,59 +30,54 @@
     <ClCompile Include="lib\parser\TokenStream.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer.cpp">
+    <ClCompile Include="src\Application\main.cpp" />
+    <ClCompile Include="src\Application\Application.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="src\Scene.cpp">
+    <ClCompile Include="src\Shading\BlinnPhongBRDF.cpp">
+      <Filter>Shading</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shading\CookTorranceBRDF.cpp">
+      <Filter>Shading</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Camera.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\RayInfo.cpp">
+    <ClCompile Include="src\RayTracer\Pixel.cpp">
+      <Filter>RayTracer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Application\RayInfo.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="src\Util.cpp">
-      <Filter>Utilities</Filter>
+    <ClCompile Include="src\Application\SceneInfo.cpp">
+      <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pixel.cpp">
+    <ClCompile Include="src\RayTracer\Util.cpp">
       <Filter>RayTracer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RayTracer\RayTracer.cpp">
+      <Filter>RayTracer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Application\Renderer.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Objects\Plane.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Objects\Sphere.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Objects\Triangle.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene\Object.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Application.hpp">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BlinnPhongBRDF.hpp">
-      <Filter>Shading</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CookTorranceBRDF.hpp">
-      <Filter>Shading</Filter>
-    </ClInclude>
-    <ClInclude Include="src\BRDF.hpp">
-      <Filter>Shading</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Plane.hpp">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Triangle.hpp">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Sphere.hpp">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Object.hpp">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SceneInfo.hpp">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\RayTracer.hpp">
-      <Filter>RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Camera.hpp">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Light.hpp">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="lib\parser\Objects.hpp">
       <Filter>Parser</Filter>
     </ClInclude>
@@ -134,32 +93,68 @@
     <ClInclude Include="lib\parser\TokenStream.hpp">
       <Filter>Parser</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer.hpp">
+    <ClInclude Include="src\Application\Application.hpp">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scene.hpp">
+    <ClInclude Include="src\Shading\BlinnPhongBRDF.hpp">
+      <Filter>Shading</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shading\BRDF.hpp">
+      <Filter>Shading</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shading\CookTorranceBRDF.hpp">
+      <Filter>Shading</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Light.hpp">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="src\RayInfo.hpp">
+    <ClInclude Include="src\Scene\Camera.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RayTracer\Params.hpp">
+      <Filter>RayTracer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RayTracer\Pixel.hpp">
+      <Filter>RayTracer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RayTracer\PixelContext.hpp">
+      <Filter>RayTracer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RayTracer\Ray.hpp">
+      <Filter>RayTracer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Application\RayInfo.hpp">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="src\Util.hpp">
-      <Filter>Utilities</Filter>
+    <ClInclude Include="src\Application\SceneInfo.hpp">
+      <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="src\Params.hpp">
-      <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ray.hpp">
-      <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="src\RayTraceResults.hpp">
+    <ClInclude Include="src\RayTracer\Util.hpp">
       <Filter>RayTracer</Filter>
     </ClInclude>
-    <ClInclude Include="src\PixelContext.hpp">
+    <ClInclude Include="src\RayTracer\RayTracer.hpp">
       <Filter>RayTracer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pixel.hpp">
+    <ClInclude Include="src\RayTracer\RayTraceResults.hpp">
       <Filter>RayTracer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Application\Renderer.hpp">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Scene.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Objects\Plane.hpp">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Objects\Sphere.hpp">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Objects\Triangle.hpp">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\Object.hpp">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

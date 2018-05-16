@@ -3,8 +3,7 @@
 
 #include <glm/glm.hpp>
 
-#include "Params.hpp"
-#include "Ray.hpp"
+#include <RayTracer/Ray.hpp>
 
 
 class Camera

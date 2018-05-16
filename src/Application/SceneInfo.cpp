@@ -3,7 +3,7 @@
 // For conditions of distribution and use, see the LICENSE file
 
 #include "SceneInfo.hpp"
-#include "Util.hpp"
+#include <RayTracer/Util.hpp>
 
 #include <parser/Tokenizer.hpp>
 

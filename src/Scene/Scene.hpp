@@ -3,11 +3,11 @@
 
 #include <glm/glm.hpp>
 
-
 #include "Object.hpp"
 #include "Camera.hpp"
 #include "Light.hpp"
-#include "PixelContext.hpp"
+
+#include <RayTracer/PixelContext.hpp>
 
 
 struct RayHitResults

@@ -2,7 +2,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "Object.hpp"
+#include <Scene/Object.hpp>
 
 
 struct SurfaceVectors
