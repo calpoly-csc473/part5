@@ -1,0 +1,19 @@
+
+language: cpp
+
+compiler:
+  - gcc
+  - clang
+
+sudo: required
+dist: trusty
+
+install:
+  # Necessary packages
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq -y install libglm-dev; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install glm; fi
+
+script:
+  - mkdir _build && cd _build
+  - cmake ..
+  - make
