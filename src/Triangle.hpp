@@ -10,7 +10,8 @@ class Triangle : public Object
 public:
 
 	Triangle(const glm::vec3 & v1, const glm::vec3 & v2, const glm::vec3 & v3);
-	bool Intersect(Ray const & ray, RayHitResults * const hit) const;
+	float Intersect(const Ray & ray) const;
+	glm::vec3 CalculateNormal(glm::vec3 const & intersectionPoint) const;
 	std::string GetObjectType() const;
 
 protected:

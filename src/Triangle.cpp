@@ -13,7 +13,7 @@ Triangle::Triangle(const glm::vec3 & v1, const glm::vec3 & v2, const glm::vec3 &
 	normal = glm::normalize(glm::cross(b - a, c - a));
 }
 
-bool Triangle::Intersect(Ray const & ray, RayHitResults * const hit) const
+float Triangle::Intersect(const Ray & ray) const
 {
 	static const float epsilon = 0.0001f;
 
@@ -51,17 +51,17 @@ bool Triangle::Intersect(Ray const & ray, RayHitResults * const hit) const
 
 	if (t >= 0.f || glm::epsilonEqual(t, 0.f, epsilon))
 	{
-		hit->t = t;
-		hit->point = ray.origin + ray.direction * t;
-		hit->normal = normal;
-		hit->object = this;
-
-		return true;
+		return t;
 	}
 	else
 	{
-		return false;
+		return -1;
 	}
+}
+
+glm::vec3 Triangle::CalculateNormal(glm::vec3 const & intersectionPoint) const
+{
+	return normal;
 }
 
 std::string Triangle::GetObjectType() const

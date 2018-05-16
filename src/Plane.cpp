@@ -6,7 +6,7 @@ Plane::Plane(const glm::vec3 & n, const float d)
  : normal(n), distance(d)
 {}
 
-bool Plane::Intersect(const Ray & ray, RayHitResults * const hit) const
+float Plane::Intersect(const Ray & ray) const
 {
 	float const denominator = glm::dot(ray.direction, normal);
 
@@ -17,16 +17,16 @@ bool Plane::Intersect(const Ray & ray, RayHitResults * const hit) const
 
 		if (t >= 0)
 		{
-			hit->t = t;
-			hit->point = ray.GetPoint(t);
-			hit->normal = normal;
-			hit->object = this;
-
-			return true;
+			return t;
 		}
 	}
 
-	return false;
+	return -1;
+}
+
+glm::vec3 Plane::CalculateNormal(glm::vec3 const & intersectionPoint) const
+{
+	return normal;
 }
 
 std::string Plane::GetObjectType() const

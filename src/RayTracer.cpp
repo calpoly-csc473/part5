@@ -72,7 +72,7 @@ RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 		// Vectors //
 		/////////////
 
-		glm::vec3 const Point = Results.IntersectionPoint = HitResults.point;
+		glm::vec3 const Point = Results.intersectionPoint = HitResults.point;
 		glm::vec3 const View = glm::normalize(ray.direction) * -1.f;
 		glm::vec3 const SurfaceNormal = glm::normalize(HitResults.normal);
 
@@ -99,7 +99,7 @@ RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 		// Local Shading //
 		///////////////////
 
-		Results.Ambient = LocalContribution * GetAmbientResults(HitObject, Point, Normal, Depth);
+		Results.ambient = LocalContribution * GetAmbientResults(HitObject, Point, Normal, Depth);
 
 		for (Light * light : scene->GetLights())
 		{
@@ -108,8 +108,8 @@ RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 			{
 				const LightingResults lighting = GetLightingResults(light, HitObject->GetMaterial(), Point, View, Normal);
 
-				Results.Diffuse += LocalContribution * lighting.Diffuse;
-				Results.Specular += LocalContribution * lighting.Specular;
+				Results.diffuse += LocalContribution * lighting.Diffuse;
+				Results.specular += LocalContribution * lighting.Specular;
 			}
 		}
 
@@ -134,7 +134,7 @@ RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 			else
 			{
 				glm::vec3 const transmissionColor = GetRefractionResults(material, Point, refractionVector, Entering, Depth, ContextIteration);
-				Results.Refraction = material.filter * transmissionColor;
+				Results.refraction = material.filter * transmissionColor;
 			}
 		}
 
@@ -146,7 +146,7 @@ RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 		if (params.useReflections && ReflectionContribution > 0.f)
 		{
 			glm::vec3 const ReflectionColor = material.color * GetReflectionResults(Point, Reflection, Depth, ContextIteration);
-			Results.Reflection = ReflectionContribution * ReflectionColor;
+			Results.reflection = ReflectionContribution * ReflectionColor;
 		}
 
 		if (ContextIteration)
@@ -160,12 +160,12 @@ RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 
 		if (params.debugNormals)
 		{
-			Results.Ambient = glm::vec3(0.f);
-			Results.Specular = glm::vec3(0.f);
-			Results.Reflection = glm::vec3(0.f);
-			Results.Refraction = glm::vec3(0.f);
+			Results.ambient = glm::vec3(0.f);
+			Results.specular = glm::vec3(0.f);
+			Results.reflection = glm::vec3(0.f);
+			Results.refraction = glm::vec3(0.f);
 
-			Results.Diffuse = Normal / 2.f + 0.5f;
+			Results.diffuse = Normal / 2.f + 0.5f;
 		}
 	}
 

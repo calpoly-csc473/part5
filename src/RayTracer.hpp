@@ -15,7 +15,6 @@
 #include "Pixel.hpp"
 #include "PixelContext.hpp"
 #include "RayTraceResults.hpp"
-#include "RayHitResults.hpp"
 
 
 

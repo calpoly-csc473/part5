@@ -10,7 +10,8 @@ class Plane : public Object
 public:
 
 	Plane(const glm::vec3 & n, const float d);
-	bool Intersect(const Ray & ray, RayHitResults * const hit) const;
+	float Intersect(const Ray & ray) const;
+	glm::vec3 CalculateNormal(glm::vec3 const & intersectionPoint) const;
 	std::string GetObjectType() const;
 
 protected:

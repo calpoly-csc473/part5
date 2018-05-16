@@ -6,46 +6,46 @@ Sphere::Sphere(const glm::vec3 & c, const float r)
  : center(c), radius(r)
 {}
 
-bool Sphere::Intersect(Ray const & ray, RayHitResults * const HitInformation) const
+float Sphere::Intersect(const Ray & ray) const
 {
 	const glm::vec3 offset = ray.origin - center;
-	const float A = glm::dot(ray.direction, ray.direction);
-	const float B = glm::dot(ray.direction, offset);
-	const float C = glm::dot(offset, offset) - radius*radius;
+	const float a = glm::dot(ray.direction, ray.direction);
+	const float b = glm::dot(ray.direction, offset);
+	const float c = glm::dot(offset, offset) - radius*radius;
 
-	const float discriminant = B * B - A * C;
+	const float discriminant = b * b - a * c;
 
 	if (discriminant >= 0.f)
 	{
 		float dividend;
-		if (B < 0)
+		if (b < 0)
 		{
-			dividend = -B + sqrt(discriminant);
+			dividend = -b + sqrt(discriminant);
 		}
 		else
 		{
-			dividend = -B - sqrt(discriminant);
+			dividend = -b - sqrt(discriminant);
 		}
 
-		float t = C / dividend;
+		float t = c / dividend;
 
 		if (t <= 0.f)
 		{
-			t = dividend / A;
+			t = dividend / a;
 		}
 
 		if (t >= 0.f)
 		{
-			HitInformation->t = t;
-			HitInformation->point = ray.origin + ray.direction * t;
-			HitInformation->normal = glm::normalize(HitInformation->point - center);
-			HitInformation->object = this;
-
-			return true;
+			return t;
 		}
 	}
 
-	return false;
+	return -1;
+}
+
+glm::vec3 Sphere::CalculateNormal(glm::vec3 const & intersectionPoint) const
+{
+	return glm::normalize(intersectionPoint - center);
 }
 
 std::string Sphere::GetObjectType() const

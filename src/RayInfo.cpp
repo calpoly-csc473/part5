@@ -49,15 +49,15 @@ void PrintIterationInfo(std::string const & ParentPrefix, IterationTreeNode * No
 	if (Iteration->hitObject)
 	{
 		std::cout << p << "      Hit Object: (ID #" << Iteration->hitObject->GetID() << " - " << Iteration->hitObject->GetObjectType() << ")" << std::endl;
-		std::cout << p << "    Intersection: {" << Iteration->results.IntersectionPoint << "} at T = " << Iteration->hitTime << std::endl;
+		std::cout << p << "    Intersection: {" << Iteration->results.intersectionPoint << "} at T = " << Iteration->hitTime << std::endl;
 		std::cout << p << "          Normal: {" << Iteration->hitNormal << "}" << std::endl;
 
 		std::cout << p << "     Final Color: {" << Iteration->results.ToColor() << "}" << std::endl;
-		std::cout << p << "         Ambient: {" << Iteration->results.Ambient << "}" << std::endl;
-		std::cout << p << "         Diffuse: {" << Iteration->results.Diffuse << "}" << std::endl;
-		std::cout << p << "        Specular: {" << Iteration->results.Specular << "}" <<std:: endl;
-		std::cout << p << "      Reflection: {" << Iteration->results.Reflection << "}" << std::endl;
-		std::cout << p << "      Refraction: {" << Iteration->results.Refraction << "}" << std::endl;
+		std::cout << p << "         Ambient: {" << Iteration->results.ambient << "}" << std::endl;
+		std::cout << p << "         Diffuse: {" << Iteration->results.diffuse << "}" << std::endl;
+		std::cout << p << "        Specular: {" << Iteration->results.specular << "}" <<std:: endl;
+		std::cout << p << "      Reflection: {" << Iteration->results.reflection << "}" << std::endl;
+		std::cout << p << "      Refraction: {" << Iteration->results.refraction << "}" << std::endl;
 		std::cout << p << "   Contributions: " << Iteration->contributions.x << " Local, " << Iteration->contributions.y << " Reflection, " << Iteration->contributions.z << " Transmission" << std::endl;
 
 		if (verbose)

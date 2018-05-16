@@ -3,9 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <parser/Objects.hpp>
-
 #include "Ray.hpp"
-#include "RayHitResults.hpp"
 
 
 struct Material
@@ -28,7 +26,8 @@ public:
 	Material & GetMaterial();
 	Material const & GetMaterial() const;
 
-	virtual bool Intersect(Ray const & Ray, RayHitResults * const HitInformation) const = 0;
+	virtual float Intersect(Ray const & ray) const = 0;
+	virtual glm::vec3 CalculateNormal(glm::vec3 const & intersectionPoint) const = 0;
 	virtual std::string GetObjectType() const = 0;
 
 protected:

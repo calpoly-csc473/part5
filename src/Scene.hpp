@@ -7,10 +7,16 @@
 #include "Object.hpp"
 #include "Camera.hpp"
 #include "Light.hpp"
-
 #include "PixelContext.hpp"
-#include "RayHitResults.hpp"
 
+
+struct RayHitResults
+{
+	float t = 0;
+	glm::vec3 point;
+	glm::vec3 normal;
+	const Object * object = nullptr;
+};
 
 class Scene
 {

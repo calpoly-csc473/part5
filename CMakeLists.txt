@@ -49,7 +49,6 @@ set(HEADERS
 	src/Pixel.hpp
 	src/PixelContext.hpp
 	src/Plane.hpp
-	src/RayHitResults.hpp
 	src/Ray.hpp
 	src/RayInfo.hpp
 	src/RayTraceResults.hpp

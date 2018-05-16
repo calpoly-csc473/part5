@@ -100,7 +100,6 @@
     <ClInclude Include="src\PixelContext.hpp" />
     <ClInclude Include="src\Plane.hpp" />
     <ClInclude Include="src\Ray.hpp" />
-    <ClInclude Include="src\RayHitResults.hpp" />
     <ClInclude Include="src\RayInfo.hpp" />
     <ClInclude Include="src\RayTracer.hpp" />
     <ClInclude Include="src\RayTraceResults.hpp" />

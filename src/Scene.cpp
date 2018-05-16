@@ -43,8 +43,6 @@ bool Scene::IsLightOccluded(const Object * const HitObject, glm::vec3 const & Po
 	float const LightDistance = glm::length(LightPosition - Point);
 	Ray const ray = Ray(Point, LightVector);
 
-	RayHitResults ShadowHit;
-
 	if (CurrentIteration)
 	{
 		CurrentIteration->shadowRays.push_back(PixelContext::ShadowInfo());
@@ -53,9 +51,10 @@ bool Scene::IsLightOccluded(const Object * const HitObject, glm::vec3 const & Po
 
 	for (auto Object : objects)
 	{
-		if (Object != HitObject && Object->Intersect(ray, & ShadowHit))
+		if (Object != HitObject)
 		{
-			if (ShadowHit.t && ShadowHit.t < LightDistance)
+			const float t = Object->Intersect(ray);
+			if (t >= 0.f && t < LightDistance)
 			{
 				if (CurrentIteration)
 				{
@@ -71,18 +70,26 @@ bool Scene::IsLightOccluded(const Object * const HitObject, glm::vec3 const & Po
 
 RayHitResults Scene::GetRayHitResults(Ray const & ray) const
 {
-	RayHitResults Closest, CurrentHit;
+	RayHitResults results;
 
-	for (auto Object : objects)
+	for (const Object * object : objects)
 	{
-		if (Object->Intersect(ray, & CurrentHit))
+		const float t = object->Intersect(ray);
+		if (t >= 0.f)
 		{
-			if (! Closest.object || CurrentHit.t < Closest.t)
+			if (! results.object || t < results.t)
 			{
-				Closest = CurrentHit;
+				results.object = object;
+				results.t = t;
 			}
 		}
 	}
 
-	return Closest;
+	if (results.object)
+	{
+		results.point = ray.GetPoint(results.t);
+		results.normal = results.object->CalculateNormal(results.point);
+	}
+
+	return results;
 }

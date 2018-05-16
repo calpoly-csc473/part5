@@ -19,6 +19,9 @@
     <Filter Include="Application">
       <UniqueIdentifier>{40a781af-9e9d-4286-93ff-7987b74096bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{0085ff45-8f5b-4f61-85ae-47bbd2c8a53a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -63,8 +66,6 @@
     <ClCompile Include="lib\parser\TokenStream.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pixel.cpp" />
-    <ClCompile Include="src\Util.cpp" />
     <ClCompile Include="src\Renderer.cpp">
       <Filter>Application</Filter>
     </ClCompile>
@@ -73,6 +74,12 @@
     </ClCompile>
     <ClCompile Include="src\RayInfo.cpp">
       <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Util.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pixel.cpp">
+      <Filter>RayTracer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -127,13 +134,6 @@
     <ClInclude Include="lib\parser\TokenStream.hpp">
       <Filter>Parser</Filter>
     </ClInclude>
-    <ClInclude Include="src\Params.hpp" />
-    <ClInclude Include="src\Pixel.hpp" />
-    <ClInclude Include="src\PixelContext.hpp" />
-    <ClInclude Include="src\Ray.hpp" />
-    <ClInclude Include="src\RayHitResults.hpp" />
-    <ClInclude Include="src\RayTraceResults.hpp" />
-    <ClInclude Include="src\Util.hpp" />
     <ClInclude Include="src\Renderer.hpp">
       <Filter>Application</Filter>
     </ClInclude>
@@ -142,6 +142,24 @@
     </ClInclude>
     <ClInclude Include="src\RayInfo.hpp">
       <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util.hpp">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Params.hpp">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ray.hpp">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RayTraceResults.hpp">
+      <Filter>RayTracer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PixelContext.hpp">
+      <Filter>RayTracer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pixel.hpp">
+      <Filter>RayTracer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
