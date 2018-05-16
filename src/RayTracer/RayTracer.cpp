@@ -107,8 +107,10 @@ RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 
 		for (Light * light : scene->GetLights())
 		{
-			const bool InShadow = params.useShadows ? scene->IsLightOccluded(HitObject, Point, light->position, ContextIteration) : false;
-			if (! InShadow)
+			const float shadowRayEpsilon = 0.0001f;
+
+			const bool inShadow = params.useShadows ? scene->IsLightOccluded(Point + Normal*shadowRayEpsilon, light->position, ContextIteration) : false;
+			if (! inShadow)
 			{
 				const LightingResults lighting = GetLightingResults(light, HitObject->GetMaterial(), Point, View, Normal);
 

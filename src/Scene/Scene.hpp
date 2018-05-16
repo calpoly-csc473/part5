@@ -26,8 +26,8 @@ class Scene
 {
 
 	// non-copyable
-	Scene(Scene const &) = delete;
-	Scene & operator =(Scene const &) = delete;
+	Scene(const Scene &) = delete;
+	Scene & operator =(const Scene &) = delete;
 
 public:
 
@@ -42,8 +42,8 @@ public:
 	const Camera & GetCamera() const;
 	Camera & GetCamera();
 
-	bool IsLightOccluded(const Object * const HitObject, glm::vec3 const & Point, glm::vec3 const & LightPosition, PixelContext::Iteration * CurrentIteration = nullptr) const;
-	RayHitResults GetRayHitResults(Ray const & Ray) const;
+	bool IsLightOccluded(const glm::vec3 & Point, const glm::vec3 & LightPosition, PixelContext::Iteration * CurrentIteration = nullptr) const;
+	RayHitResults GetRayHitResults(const Ray & Ray) const;
 
 protected:
 
