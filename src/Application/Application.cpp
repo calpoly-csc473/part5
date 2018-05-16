@@ -22,6 +22,7 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
+#include <stdexcept>
 
 
 void Application::ReadArguments(int argc, char ** argv)
