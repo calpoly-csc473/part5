@@ -2,6 +2,7 @@
 #include "Application.hpp"
 #include "SceneInfo.hpp"
 #include "Renderer.hpp"
+#include "RayInfo.hpp"
 
 #include "RayTracer.hpp"
 #include "Scene.hpp"
@@ -29,21 +30,17 @@ void Application::ReadArguments(int argc, char ** argv)
 
 int Application::Run()
 {
-	int ReturnStatus = 0;
-
 	try
 	{
 		RunCommands();
-		ReturnStatus = 0;
+		return 0;
 	}
 	catch (std::exception const & e)
 	{
 		std::cout << e.what() << std::endl;
 		PrintUsage();
-		ReturnStatus = 1;
+		return 1;
 	}
-
-	return ReturnStatus;
 }
 
 void Application::PrintUsage()
@@ -149,7 +146,7 @@ void Application::RunCommands()
 
 		ParseExtraParams(5);
 		rayTracer->SetParams(params);
-		Renderer::DrawThreaded(rayTracer, scene);
+		Renderer::DrawThreaded(rayTracer);
 
 		return;
 	}
@@ -223,12 +220,12 @@ void Application::RunCommands()
 	}
 	else if (Command == "printrays")
 	{
-		PrintRayInfo(scene, X, Y, false);
+		RayInfo::PrintRayInfo(rayTracer, scene, X, Y, false);
 		return;
 	}
 	else if (Command == "pixeltrace")
 	{
-		PrintRayInfo(scene, X, Y, true);
+		RayInfo::PrintRayInfo(rayTracer, scene, X, Y, true);
 		return;
 	}
 
@@ -310,8 +307,4 @@ Scene * Application::LoadPovrayScene(const std::string & fileName)
 	}
 
 	return scene;
-}
-
-void Application::PrintRayInfo(Scene * scene, int const x, int const y, bool const decoration)
-{
 }

@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="App">
-      <UniqueIdentifier>{40a781af-9e9d-4286-93ff-7987b74096bc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shading">
       <UniqueIdentifier>{6c293007-0034-4f48-9acd-56406be97bf1}</UniqueIdentifier>
     </Filter>
@@ -19,10 +16,13 @@
     <Filter Include="Parser">
       <UniqueIdentifier>{e34bf9ac-b922-4adc-9bda-e144f3e6f702}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Application">
+      <UniqueIdentifier>{40a781af-9e9d-4286-93ff-7987b74096bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
-      <Filter>App</Filter>
+      <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="src\BlinnPhongBRDF.cpp">
       <Filter>Shading</Filter>
@@ -43,13 +43,13 @@
       <Filter>Objects</Filter>
     </ClCompile>
     <ClCompile Include="src\SceneInfo.cpp">
-      <Filter>App</Filter>
+      <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="src\RayTracer.cpp">
       <Filter>RayTracer</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>App</Filter>
+      <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="src\Camera.cpp">
       <Filter>Scene</Filter>
@@ -66,15 +66,18 @@
     <ClCompile Include="src\Pixel.cpp" />
     <ClCompile Include="src\Util.cpp" />
     <ClCompile Include="src\Renderer.cpp">
-      <Filter>App</Filter>
+      <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="src\Scene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\RayInfo.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.hpp">
-      <Filter>App</Filter>
+      <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="src\BlinnPhongBRDF.hpp">
       <Filter>Shading</Filter>
@@ -98,7 +101,7 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="src\SceneInfo.hpp">
-      <Filter>App</Filter>
+      <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="src\RayTracer.hpp">
       <Filter>RayTracer</Filter>
@@ -132,10 +135,13 @@
     <ClInclude Include="src\RayTraceResults.hpp" />
     <ClInclude Include="src\Util.hpp" />
     <ClInclude Include="src\Renderer.hpp">
-      <Filter>App</Filter>
+      <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene.hpp">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RayInfo.hpp">
+      <Filter>Application</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
