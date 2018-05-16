@@ -91,8 +91,8 @@ RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 		///////////////////
 
 		float const LocalContribution = (1.f - material.filter) * (1.f - material.finish.reflection);
-		float const TransmissionContribution = (material.filter);
-		float ReflectionContribution = (1.f - material.filter) * (material.finish.reflection) + (material.filter);
+		float TransmissionContribution = (material.filter);
+		float ReflectionContribution = (1.f - material.filter) * (material.finish.reflection);
 
 
 		///////////////////
@@ -124,7 +124,8 @@ RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 
 			if (std::isnan(refractionVector.x) || std::isnan(refractionVector.y) || std::isnan(refractionVector.z))
 			{
-				ReflectionContribution = (1.f - material.filter) * (material.finish.reflection) + (material.filter);
+				ReflectionContribution += TransmissionContribution;
+				TransmissionContribution = 0.f;
 				if (ContextIteration)
 				{
 					ContextIteration->extraInfo += " total-internal-reflection";
@@ -274,8 +275,8 @@ glm::vec3 RayTracer::CalculateRefractionVector(glm::vec3 const & View, glm::vec3
 		Normal = -Normal;
 	}
 
-	float const C1 = dot(View, Normal);
-	float const C2 = sqrt(1 - (iorRatio) * (1 - (C1 * C1)));
+	const float c1 = glm::dot(View, Normal);
+	const float c2 = sqrt(1 - (iorRatio * iorRatio) * (1 - (c1 * c1)));
 
-	return glm::normalize((-View * iorRatio) + Normal * (iorRatio * C1 - C2));
+	return glm::normalize((-View * iorRatio) + Normal * (iorRatio * c1 - c2));
 }
