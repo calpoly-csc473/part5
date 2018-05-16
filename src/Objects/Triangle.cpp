@@ -36,20 +36,20 @@ float Triangle::Intersect(const Ray & ray) const
 	a = glm::dot(e1,h);
 
 	if (glm::epsilonEqual(a, 0.f, epsilon))
-		return false;
+		return -1;
 
 	f = 1 / a;
 	s = p - v0;
 	u = f * glm::dot(s,h);
 
 	if ((u < 0.f || u > 1.f) && ! glm::epsilonEqual(u, 0.f, epsilon) && ! glm::epsilonEqual(u, 1.f, epsilon))
-		return false;
+		return -1;
 
 	q = glm::cross(s, e1);
 	v = f * glm::dot(d,q);
 
 	if ((v < 0.f || u + v > 1.f) && ! glm::epsilonEqual(v, 0.f, epsilon) && ! glm::epsilonEqual(u + v, 1.f, epsilon))
-		return false;
+		return -1;
 
 	const float t = f * glm::dot(e2,q);
 
