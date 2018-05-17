@@ -14,6 +14,18 @@ class RayInfo
 
 public:
 
-	static void PrintRayInfo(RayTracer * rayTracer, Scene * scene, const int x, const int y, const bool decoration);
+	static void FirstHit(RayTracer * rayTracer, Scene * scene, const int x, const int y);
+	static void PixelColor(RayTracer * rayTracer, Scene * scene, const int x, const int y);
+	static void DiagnosticTrace(RayTracer * rayTracer, Scene * scene, const int x, const int y, const bool decoration);
+
+protected:
+
+	struct IterationTreeNode
+	{
+		PixelContext::Iteration * iteration = nullptr;
+		std::vector<IterationTreeNode *> children;
+	};
+
+	static void RecursiveIterationPrint(const std::string & parentPrefix, const IterationTreeNode * const node, const bool decoration, const bool verbose);
 
 };

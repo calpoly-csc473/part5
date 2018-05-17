@@ -195,71 +195,37 @@ void Application::RunCommands()
 		throw std::invalid_argument("Insufficient arguments.");
 	}
 
-	int const X = std::stoi(commandArguments[5]);
-	int const Y = std::stoi(commandArguments[6]);
+	const int x = std::stoi(commandArguments[5]);
+	const int y = std::stoi(commandArguments[6]);
 
 	ParseExtraParams(7);
 	rayTracer->SetParams(params);
 
 	if (command == "pixelray")
 	{
-		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), rayTracer->GetParams().imageSize);
+		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(x, y), rayTracer->GetParams().imageSize);
 
-		std::cout << "Pixel: [" << X << ", " << Y << "] Ray: " << ray << std::endl;
+		std::cout << "Pixel: [" << x << ", " << y << "] Ray: " << ray << std::endl;
 		return;
 	}
 	else if (command == "firsthit")
 	{
-		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), rayTracer->GetParams().imageSize);
-		RayHitResults const results = scene->GetRayHitResults(scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), rayTracer->GetParams().imageSize));
-		float const intersection = results.t;
-		Object const * const object = results.object;
-
-		std::cout << "Pixel: [" << X << ", " << Y << "] Ray: " << ray  << std::endl;
-
-		if (object)
-		{
-			std::cout << "T = " << intersection << std::endl;
-			std::cout << "Object Type: " << object->GetObjectType() << std::endl;
-			std::cout << "Color: " << object->GetMaterial().color << std::endl;
-		}
-		else
-		{
-			std::cout << "No Hit" << std::endl;
-		}
+		RayInfo::FirstHit(rayTracer, scene, x, y);
 		return;
 	}
 	else if (command == "pixelcolor")
 	{
-		Pixel const pixel = rayTracer->CastRaysForPixel(glm::ivec2(X, Y));
-		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), rayTracer->GetParams().imageSize);
-		RayHitResults const Results = scene->GetRayHitResults(scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), params.imageSize));
-		float const intersection = Results.t;
-		Object const * const object = Results.object;
-
-		std::cout << "Pixel: [" << X << ", " << Y << "] Ray: " << ray << std::endl;
-
-		if (object)
-		{
-			std::cout << "T = " << intersection << std::endl;
-			std::cout << "Object Type: " << object->GetObjectType() << std::endl;
-			std::cout << "BRDF: " << "Blinn-Phong" << std::endl;
-			std::cout << "Color: " << pixel << std::endl;
-		}
-		else
-		{
-			std::cout << "No Hit" << std::endl;
-		}
+		RayInfo::PixelColor(rayTracer, scene, x, y);
 		return;
 	}
 	else if (command == "printrays")
 	{
-		RayInfo::PrintRayInfo(rayTracer, scene, X, Y, false);
+		RayInfo::DiagnosticTrace(rayTracer, scene, x, y, false);
 		return;
 	}
 	else if (command == "pixeltrace")
 	{
-		RayInfo::PrintRayInfo(rayTracer, scene, X, Y, true);
+		RayInfo::DiagnosticTrace(rayTracer, scene, x, y, true);
 		return;
 	}
 
@@ -268,7 +234,6 @@ void Application::RunCommands()
 
 void Application::ParseExtraParams(size_t const StartIndex)
 {
-	std::string Remainder;
 	for (size_t i = StartIndex; i < commandArguments.size(); ++ i)
 	{
 		std::string const & Arg = commandArguments[i];
