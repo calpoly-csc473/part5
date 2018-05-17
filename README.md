@@ -3,7 +3,7 @@
 
 [![Build Status](https://travis-ci.org/calpoly-csc473/part3.svg?branch=master)](https://travis-ci.org/calpoly-csc473/part3)
 
-This is an implementation of Part 3 of the CSC 473 raytracer project.
+This is an implementation of [Part 3](https://iondune.github.io/csc473/project/part3) of the CSC 473 raytracer project.
 You have the option of using this as the basis for your Part 4 through Part 7 projects in this class.
 
 Due to the flexible nature of deadlines in this class,
@@ -46,9 +46,9 @@ The source code of this project is organized into folders by general topic.
       for the purposes of implementing commands like `pixeltrace`.
 - [`Scene/`](src/Scene/) contains the fundamental parts of a scene description.
   - [Scene](src/Scene/Scene.hpp) stores a list of objects, lights, and a camera with utilities for querying ray intersection.
-  - [Camera](src/Camera/Camera.hpp) represents the scene camera and generates rays for a given pixel.
-  - [Light](src/Light/Light.hpp) simply contains the position and color of a light source.
-  - [Object](src/Object/Object.hpp) provides the interface for all intersectable scene objects,
+  - [Camera](src/Scene/Camera.hpp) represents the scene camera and generates rays for a given pixel.
+  - [Light](src/Scene/Light.hpp) simply contains the position and color of a light source.
+  - [Object](src/Scene/Object.hpp) provides the interface for all intersectable scene objects,
     and is implemented by the classes in the [`Objects/`](src/Objects/) folder.
 - [`Shading/`](src/Shading/) contains two different BRDF implementations,
   [Blinn-Phong](src/Shading/BlinnPhongBRDF.cpp) and [Cook-Torrance](src/Shading/CookTorranceBRDF.cpp),
