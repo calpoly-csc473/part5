@@ -17,9 +17,9 @@ but not copy-and-pasted.
 ## Documentation
 
 - [`ext/`](ext/) contains external libraries
-  - [`stb/`](ext/stb/) contains the `stb_image_write.h` utility from the [stb](https://github.com/nothings/stb) library
+- [`ext/stb/`](ext/stb/) contains the `stb_image_write.h` utility from the [stb](https://github.com/nothings/stb) library
 - [`lib/`](lib/) contains the parsing library
-  - [`parser/`](lib/parser/) is a slightly modified version of the [released parsing library](https://github.com/calpoly-csc473/parser) for this class
+- [`lib/parser/`](lib/parser/) is a slightly modified version of the [released parsing library](https://github.com/calpoly-csc473/parser) for this class
 - [`src/`](src/) contains all source code and headers, organized into folders.
 
 The source code of this project is organized into folders by general topic.
