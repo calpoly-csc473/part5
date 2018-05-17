@@ -10,57 +10,51 @@
 
 Triangle::Triangle(const glm::vec3 & v1, const glm::vec3 & v2, const glm::vec3 & v3)
 {
-	a = v1;
-	b = v2;
-	c = v3;
+	this->v1 = v1;
+	this->v2 = v2;
+	this->v3 = v3;
 
-	normal = glm::normalize(glm::cross(b - a, c - a));
+	normal = glm::normalize(glm::cross(v2 - v1, v3 - v1));
 }
 
 float Triangle::Intersect(const Ray & ray) const
 {
 	static const float epsilon = 0.0001f;
 
-	const glm::vec3 p = ray.origin;
-	const glm::vec3 d = ray.direction;
+	const glm::vec3 abc = v1 - v2;
+	const glm::vec3 def = v1 - v3;
+	const glm::vec3 ghi = ray.direction;
+	const glm::vec3 jkl = v1 - ray.origin;
 
-	glm::vec3 e1, e2, h, s, q;
+	const float ei_hf = def.y * ghi.z - ghi.y * def.z;
+	const float gf_di = ghi.x * def.z - def.x * ghi.z;
+	const float dh_eg = def.x * ghi.y - def.y * ghi.x;
 
-	glm::vec3 v0 = a, v1 = b, v2 = c;
+	const float denom = abc.x * ei_hf + abc.y * gf_di + abc.z * dh_eg;
 
-	float a,f,u,v;
-	e1 = v1 - v0;
-	e2 = v2 - v0;
-
-	h = glm::cross(d, e2);
-	a = glm::dot(e1,h);
-
-	if (glm::epsilonEqual(a, 0.f, epsilon))
+	if (glm::epsilonEqual(denom, 0.f, epsilon))
 		return -1;
 
-	f = 1 / a;
-	s = p - v0;
-	u = f * glm::dot(s,h);
+	const float beta = (jkl.x * ei_hf + jkl.y * gf_di + jkl.z * dh_eg) / denom;
 
-	if ((u < 0.f || u > 1.f) && ! glm::epsilonEqual(u, 0.f, epsilon) && ! glm::epsilonEqual(u, 1.f, epsilon))
+	if (beta < 0 || beta > 1)
 		return -1;
 
-	q = glm::cross(s, e1);
-	v = f * glm::dot(d,q);
+	const float ak_jb = abc.x * jkl.y - jkl.x * abc.y;
+	const float jc_al = jkl.x * abc.z - abc.x * jkl.z;
+	const float bl_kc = abc.y * jkl.z - jkl.y * abc.z;
 
-	if ((v < 0.f || u + v > 1.f) && ! glm::epsilonEqual(v, 0.f, epsilon) && ! glm::epsilonEqual(u + v, 1.f, epsilon))
+	const float gamma = (ghi.z * ak_jb + ghi.y * jc_al + ghi.x * bl_kc) / denom;
+
+	if (gamma < 0 || gamma > 1 - beta)
 		return -1;
 
-	const float t = f * glm::dot(e2,q);
+	const float t = (-def.z * ak_jb + -def.y * jc_al + -def.x * bl_kc) / denom;
 
-	if (t >= 0.f || glm::epsilonEqual(t, 0.f, epsilon))
-	{
-		return t;
-	}
-	else
-	{
+	if (t < 0)
 		return -1;
-	}
+
+	return t;
 }
 
 glm::vec3 Triangle::CalculateNormal(glm::vec3 const & intersectionPoint) const

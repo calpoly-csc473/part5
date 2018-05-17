@@ -20,7 +20,7 @@ public:
 
 protected:
 
-	glm::vec3 a, b, c;
+	glm::vec3 v1, v2, v3;
 	glm::vec3 normal;
 
 };
