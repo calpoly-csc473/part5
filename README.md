@@ -65,7 +65,7 @@ Don't you want use to be free to use this code in our projects?
 *increase* your rights to use this software, not *decrease* them.
 Any time you write software, you automatically own the copyright on that software - no registration is necessary.
 So if I distributed this code without any notices or licenses attached,
-- I would still own the copyright, and in using the code you would technically be commiting copyright infringement.
+I would still own the copyright, and in using the code you would technically be commiting copyright infringement.
 For the purposes of this class you are almost uncertainly protected by **Fair Use**,
 but if you decided to sell your raytracer commerically at some later date,
 that would definitely be copyright infringement.
