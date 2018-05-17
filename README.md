@@ -55,6 +55,19 @@ The source code of this project is organized into folders by general topic.
   as well as a general [BRDF](src/Shading/BRDF.hpp) interface used by the [RayTracer](src/RayTracer/RayTracer.hpp) to compute shading.
 
 
+## Building
+
+The only dependency not included is [GLM](https://glm.g-truc.net/).
+I recommend installing GLM using your operating system's package manager.
+
+- On Windows, I recommend [vcpkg](https://github.com/Microsoft/vcpkg)
+- On Mac OS, [Brew](http://brewformulas.org/Glm)
+- On Linux, `apt`, `yum`, etc.
+
+Both CMake and Visual Studio build files are provided.
+CMake can of course be used to generate Visual Studio build files.
+The `.sln` and `.vcxproj` are provided for convenience.
+
 
 ## FAQ
 
