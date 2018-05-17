@@ -57,34 +57,58 @@ void Application::PrintUsage()
 		return;
 	}
 
-	if (commandArguments.size() < 3)
+	if (commandArguments.size() < 2)
 	{
 		printf("usage: %s <command> <file_name> [arguments ...]\n", commandArguments[0].c_str());
 		return;
 	}
 
-	std::string const ProgramName = commandArguments[0];
-	std::string const Command = commandArguments[1];
+	const std::string programName = commandArguments[0];
+	std::string command = commandArguments[1];
 
-	if (Command == "render")
+	if (command == "help" && commandArguments.size() > 2)
 	{
-		printf("usage: %s render <file_name> [arguments ...]\n", ProgramName.c_str());
+		command = commandArguments[2];
 	}
-	else if (Command == "sceneinfo")
+
+	bool showParamOptions = false;
+
+	if (command == "render" || command == "raycast")
 	{
-		printf("usage: %s sceneinfo <file_name> [arguments ...]\n", ProgramName.c_str());
+		printf("usage: %s %s <file_name> <width> <height> [arguments ...]\n", programName.c_str(), command.c_str());
+		showParamOptions = true;
 	}
-	else if (Command == "pixelray")
+	else if (command == "sceneinfo")
 	{
-		printf("usage: %s pixelray <file_name> [arguments ...]\n", ProgramName.c_str());
+		printf("usage: %s sceneinfo <file_name>\n", programName.c_str());
 	}
-	else if (Command == "firsthit")
+	else if (command == "pixelray" || command == "firsthit" || command == "printrays" || command == "pixeltrace")
 	{
-		printf("usage: %s firsthit <file_name> [arguments ...]\n", ProgramName.c_str());
+		printf("usage: %s %s <file_name> <width> <height> <x> <y> [arguments ...]\n", programName.c_str(), command.c_str());
+		showParamOptions = true;
+	}
+	else if (command == "help")
+	{
+		printf("usage: raytracer <command> <file_name> [arguments ...]\n");
+		printf("    supported commands:\n");
+		printf("        raycast      render an image using a simple raycast\n");
+		printf("        render       render a full, shaded raytrace\n");
+		printf("        sceneinfo    simply print the objects found in the given scene description file\n");
+		printf("        pixelray     print the camera-generated ray for the given pixel\n");
+		printf("        firsthit     print the first object hit for the given pixel\n");
+		printf("        printrays    print all recursively generated rays for the given pixel\n");
+		printf("        pixeltrace   print all recursively generated rays for the given pixel, with fancy formatting\n");
 	}
 	else
 	{
-		printf("unknown command: %s\n", Command.c_str());
+		printf("unknown command: %s\n", command.c_str());
+	}
+
+	if (showParamOptions)
+	{
+		printf("    possible arguments:\n");
+		printf("        -altbrdf    use Cook-Torrance instead of Blinn-Phong BRDF\n");
+		printf("        -normals    display surface normals instead of any shading\n");
 	}
 }
 
@@ -95,8 +119,13 @@ void Application::RunCommands()
 		throw std::invalid_argument("Insufficient arguments.");
 	}
 
-	std::string const ProgramName = commandArguments[0];
-	std::string const Command = commandArguments[1];
+	const std::string command = commandArguments[1];
+
+	if (command == "help")
+	{
+		PrintUsage();
+		return;
+	}
 
 	if (commandArguments.size() < 3)
 	{
@@ -113,7 +142,7 @@ void Application::RunCommands()
 	// Simple Commands //
 	/////////////////////
 
-	if (Command == "sceneinfo")
+	if (command == "sceneinfo")
 	{
 		SceneInfo::RunCommand(fileName);
 		return;
@@ -138,12 +167,12 @@ void Application::RunCommands()
 	params.useShading = true;
 	params.useShadows = true;
 
-	if (Command == "render" || Command == "raycast")
+	if (command == "render" || command == "raycast")
 	{
-		if (Command == "render")
+		if (command == "render")
 		{
 		}
-		else if (Command == "raycast")
+		else if (command == "raycast")
 		{
 			params.useShading = false;
 			params.useShadows = false;
@@ -172,14 +201,14 @@ void Application::RunCommands()
 	ParseExtraParams(7);
 	rayTracer->SetParams(params);
 
-	if (Command == "pixelray")
+	if (command == "pixelray")
 	{
 		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), rayTracer->GetParams().imageSize);
 
 		std::cout << "Pixel: [" << X << ", " << Y << "] Ray: " << ray << std::endl;
 		return;
 	}
-	else if (Command == "firsthit")
+	else if (command == "firsthit")
 	{
 		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), rayTracer->GetParams().imageSize);
 		RayHitResults const results = scene->GetRayHitResults(scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), rayTracer->GetParams().imageSize));
@@ -200,7 +229,7 @@ void Application::RunCommands()
 		}
 		return;
 	}
-	else if (Command == "pixelcolor")
+	else if (command == "pixelcolor")
 	{
 		Pixel const pixel = rayTracer->CastRaysForPixel(glm::ivec2(X, Y));
 		Ray const ray = scene->GetCamera().GetPixelRay(glm::ivec2(X, Y), rayTracer->GetParams().imageSize);
@@ -223,18 +252,17 @@ void Application::RunCommands()
 		}
 		return;
 	}
-	else if (Command == "printrays")
+	else if (command == "printrays")
 	{
 		RayInfo::PrintRayInfo(rayTracer, scene, X, Y, false);
 		return;
 	}
-	else if (Command == "pixeltrace")
+	else if (command == "pixeltrace")
 	{
 		RayInfo::PrintRayInfo(rayTracer, scene, X, Y, true);
 		return;
 	}
 
-	printf("unknown command: %s\n", Command.c_str());
 	throw std::invalid_argument("Unknown command.");
 }
 
