@@ -13,6 +13,7 @@ class Renderer
 
 public:
 
-	static void DrawThreaded(RayTracer * rayTracer);
+	static void Draw(RayTracer * rayTracer);
+	static void DrawThreaded(RayTracer * rayTracer, const int numThreads);
 
 };

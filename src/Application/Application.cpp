@@ -151,7 +151,7 @@ void Application::RunCommands()
 
 		ParseExtraParams(5);
 		rayTracer->SetParams(params);
-		Renderer::DrawThreaded(rayTracer);
+		Renderer::Draw(rayTracer);
 
 		return;
 	}

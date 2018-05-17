@@ -12,60 +12,80 @@
 #include <stb/stb_image_write.h>
 
 
-void Renderer::DrawThreaded(RayTracer * rayTracer)
+void Renderer::Draw(RayTracer * rayTracer)
 {
 	glm::ivec2 const imageSize = rayTracer->GetParams().imageSize;
 	unsigned char * imageBuffer = new unsigned char[imageSize.x * imageSize.y * 4]();
 
-	static int const ThreadCount = 8;
-	int const PixelCount = imageSize.x * imageSize.y;
+	for (int x = 0; x < imageSize.x; ++ x)
+	{
+		for (int y = 0; y < imageSize.y; ++ y)
+		{
+			Pixel p = rayTracer->CastRaysForPixel(glm::ivec2(x, y));
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 0] = p.Red;
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 1] = p.Green;
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 2] = p.Blue;
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 3] = 255;
+		}
+	}
 
-	std::atomic<int> DoneCount;
+	stbi_write_png("output.png", imageSize.x, imageSize.y, 4, imageBuffer, imageSize.x * 4);
+	delete[] imageBuffer;
+}
+
+void Renderer::DrawThreaded(RayTracer * rayTracer, const int numThreads)
+{
+	glm::ivec2 const imageSize = rayTracer->GetParams().imageSize;
+	unsigned char * imageBuffer = new unsigned char[imageSize.x * imageSize.y * 4]();
+
+	int const pixelCount = imageSize.x * imageSize.y;
+
+	std::atomic<int> doneCount;
 	std::atomic<int> currentPixel;
 
-	DoneCount = 0;
+	doneCount = 0;
 	currentPixel = 0;
 
-	auto RenderKernel = [&](int const ThreadIndex)
+	auto RenderKernel = [&](int const threadIndex)
 	{
 		while (true)
 		{
 			int pixel = currentPixel ++;
 
-			if (pixel >= PixelCount)
+			if (pixel >= pixelCount)
 			{
 				break;
 			}
 
-			int const X = pixel / imageSize.y;
-			int const Y = pixel % imageSize.y;
+			int const x = pixel / imageSize.y;
+			int const y = pixel % imageSize.y;
 
-			Pixel p = rayTracer->CastRaysForPixel(glm::ivec2(X, Y));
-			imageBuffer[X * 4 + (imageSize.y - 1 - Y) * 4 * imageSize.x + 0] = p.Red;
-			imageBuffer[X * 4 + (imageSize.y - 1 - Y) * 4 * imageSize.x + 1] = p.Green;
-			imageBuffer[X * 4 + (imageSize.y - 1 - Y) * 4 * imageSize.x + 2] = p.Blue;
-			imageBuffer[X * 4 + (imageSize.y - 1 - Y) * 4 * imageSize.x + 3] = 255;
+			Pixel p = rayTracer->CastRaysForPixel(glm::ivec2(x, y));
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 0] = p.Red;
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 1] = p.Green;
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 2] = p.Blue;
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 3] = 255;
 		}
 
-		DoneCount ++;
+		doneCount ++;
 
-		if (ThreadIndex == 0)
+		if (threadIndex == 0)
 		{
-			while (DoneCount < ThreadCount)
+			while (doneCount < numThreads)
 			{
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			}
 		}
 	};
 
-	std::vector<std::thread> Threads;
-	for (int i = 0; i < ThreadCount; ++ i)
+	std::vector<std::thread> threads;
+	for (int i = 0; i < numThreads; ++ i)
 	{
-		Threads.push_back(std::thread(RenderKernel, i));
+		threads.push_back(std::thread(RenderKernel, i));
 	}
-	for (int i = 0; i < ThreadCount; ++ i)
+	for (int i = 0; i < numThreads; ++ i)
 	{
-		Threads[i].join();
+		threads[i].join();
 	}
 
 	stbi_write_png("output.png", imageSize.x, imageSize.y, 4, imageBuffer, imageSize.x * 4);
