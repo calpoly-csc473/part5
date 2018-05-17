@@ -81,7 +81,6 @@ RayTraceResults RayTracer::CastRay(const Ray & ray, const int depth) const
 		const glm::vec3 point = results.intersectionPoint = hitResults.point;
 		const glm::vec3 view = -glm::normalize(ray.direction);
 		const glm::vec3 normal = glm::normalize(hitResults.normal);
-		const glm::vec3 reflection = glm::normalize(normal * glm::dot(view, normal) * 2.f - view);
 
 
 		///////////////////
@@ -89,7 +88,7 @@ RayTraceResults RayTracer::CastRay(const Ray & ray, const int depth) const
 		///////////////////
 
 		float const localContribution = (1.f - material.filter) * (1.f - material.finish.reflection);
-		float transmissionContribution = (material.filter);
+		float transmissionContribution = material.filter;
 		float reflectionContribution = (1.f - material.filter) * (material.finish.reflection);
 
 
@@ -101,8 +100,10 @@ RayTraceResults RayTracer::CastRay(const Ray & ray, const int depth) const
 
 		for (Light * light : scene->GetLights())
 		{
+			const bool inShadow = params.useShadows ?
+				scene->IsLightOccluded(point + normal*surfaceEpsilon, light->position, contextIteration) :
+				false;
 
-			const bool inShadow = params.useShadows ? scene->IsLightOccluded(point + normal*surfaceEpsilon, light->position, contextIteration) : false;
 			if (! inShadow)
 			{
 				const LightingResults lighting = GetLightingResults(light, hitObject->GetMaterial(), point, view, normal);
@@ -119,15 +120,16 @@ RayTraceResults RayTracer::CastRay(const Ray & ray, const int depth) const
 
 		if (params.useRefractions && transmissionContribution > 0.f)
 		{
-			const glm::vec3 refractionVector = CalculateRefractionVector(view, normal, material.finish.ior);
+			const glm::vec3 transmissionVector = CalculateRefractionVector(view, normal, material.finish.ior);
 			const bool entering = glm::dot(normal, view) >= 0.f;
 
-			if (refractionVector == glm::vec3(0.f))
+			if (transmissionVector == glm::vec3(0.f))
 			{
-				// CalculateRefractionVector returns the zero-vector in the case of total internal reflection
+				// CalculateRefractionVector() returns the zero-vector in the case of total internal reflection
 
 				reflectionContribution += transmissionContribution;
 				transmissionContribution = 0.f;
+
 				if (contextIteration)
 				{
 					contextIteration->extraInfo += " total-internal-reflection";
@@ -135,7 +137,7 @@ RayTraceResults RayTracer::CastRay(const Ray & ray, const int depth) const
 			}
 			else
 			{
-				const glm::vec3 transmissionColor = GetRefractionResults(material, entering ? point - normal*surfaceEpsilon : point + normal*surfaceEpsilon, refractionVector, entering, depth, contextIteration);
+				const glm::vec3 transmissionColor = GetRefractionResults(material, entering ? point - normal*surfaceEpsilon : point + normal*surfaceEpsilon, transmissionVector, entering, depth, contextIteration);
 				results.refraction = material.filter * transmissionColor;
 			}
 		}
@@ -147,9 +149,15 @@ RayTraceResults RayTracer::CastRay(const Ray & ray, const int depth) const
 
 		if (params.useReflections && reflectionContribution > 0.f)
 		{
-			const glm::vec3 reflectionColor = material.color * GetReflectionResults(point + normal*surfaceEpsilon, reflection, depth, contextIteration);
+			const glm::vec3 reflectionVector = glm::normalize(normal * glm::dot(view, normal) * 2.f - view);
+			const glm::vec3 reflectionColor = material.color * GetReflectionResults(point + normal*surfaceEpsilon, reflectionVector, depth, contextIteration);
 			results.reflection = reflectionContribution * reflectionColor;
 		}
+
+
+		//////////////
+		// Finalize //
+		//////////////
 
 		if (contextIteration)
 		{
@@ -174,7 +182,7 @@ RayTraceResults RayTracer::CastRay(const Ray & ray, const int depth) const
 	return results;
 }
 
-glm::vec3 RayTracer::GetAmbientResults(const Object * const hitObject, glm::vec3 const & Point, glm::vec3 const & Normal, int Depth) const
+glm::vec3 RayTracer::GetAmbientResults(const Object * const hitObject, const glm::vec3 & point, const glm::vec3 & normal, const int depth) const
 {
 	if (params.useShading)
 	{
@@ -186,16 +194,16 @@ glm::vec3 RayTracer::GetAmbientResults(const Object * const hitObject, glm::vec3
 	}
 }
 
-LightingResults RayTracer::GetLightingResults(Light const * const light, Material const & material, glm::vec3 const & Point, glm::vec3 const & View, glm::vec3 const & Normal) const
+LightingResults RayTracer::GetLightingResults(const Light * const light, const Material & material, const glm::vec3 & point, const glm::vec3 & view, const glm::vec3 & normal) const
 {
 	LightingResults Results;
 
 	if (params.useShading)
 	{
 		SurfaceVectors surface;
-		surface.normal = Normal;
-		surface.view = View;
-		surface.light = glm::normalize(light->position - Point);
+		surface.normal = normal;
+		surface.view = view;
+		surface.light = glm::normalize(light->position - point);
 
 		if (brdf)
 		{
@@ -211,9 +219,9 @@ LightingResults RayTracer::GetLightingResults(Light const * const light, Materia
 	return Results;
 }
 
-glm::vec3 RayTracer::GetReflectionResults(glm::vec3 const & Point, const glm::vec3 & Reflection, int Depth, PixelContext::Iteration * currentIteration) const
+glm::vec3 RayTracer::GetReflectionResults(const glm::vec3 & point, const glm::vec3 & reflectionVector, const int depth, PixelContext::Iteration * currentIteration) const
 {
-	if (Depth > 0)
+	if (depth > 0)
 	{
 		if (context)
 		{
@@ -222,13 +230,13 @@ glm::vec3 RayTracer::GetReflectionResults(glm::vec3 const & Point, const glm::ve
 			context->iterations.back()->parent = currentIteration;
 		}
 
-		return CastRay(Ray(Point + reflectionEpsilon * Reflection, Reflection), Depth - 1).ToColor();
+		return CastRay(Ray(point, reflectionVector), depth - 1).ToColor();
 	}
 
 	return glm::vec3(0.f);
 }
 
-glm::vec3 RayTracer::GetRefractionResults(const Material & material, const glm::vec3 & point, glm::vec3 const & refractionVector, const bool entering, int const depth, PixelContext::Iteration * currentIteration) const
+glm::vec3 RayTracer::GetRefractionResults(const Material & material, const glm::vec3 & point, glm::vec3 const & transmissionVector, const bool entering, int const depth, PixelContext::Iteration * currentIteration) const
 {
 	if (depth > 0)
 	{
@@ -248,7 +256,7 @@ glm::vec3 RayTracer::GetRefractionResults(const Material & material, const glm::
 			}
 		}
 
-		const RayTraceResults results = CastRay(Ray(point, refractionVector), depth - 1);
+		const RayTraceResults results = CastRay(Ray(point, transmissionVector), depth - 1);
 
 		if (entering)
 		{

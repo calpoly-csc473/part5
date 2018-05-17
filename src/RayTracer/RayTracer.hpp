@@ -41,12 +41,12 @@ public:
 
 	Pixel CastRaysForPixel(const glm::ivec2 & Pixel) const;
 	RayTraceResults CastRay(const Ray & ray, const int depth) const;
-	glm::vec3 GetAmbientResults(const Object * const HitObject, glm::vec3 const & Point, glm::vec3 const & Normal, const int depth) const;
-	LightingResults GetLightingResults(const Light * const Light, const Material & Material, const glm::vec3 & Point, const glm::vec3 & View, const glm::vec3 & normal) const;
-	glm::vec3 GetReflectionResults(const glm::vec3 & point, const glm::vec3 & reflection, const int Depth, PixelContext::Iteration * currentIteration = nullptr) const;
-	glm::vec3 GetRefractionResults(const Material & material, const glm::vec3 & point, const glm::vec3 & refractionVector, const bool entering, const int depth, PixelContext::Iteration * currentIteration = nullptr) const;
+	glm::vec3 GetAmbientResults(const Object * const HhtObject, const glm::vec3 & point, const glm::vec3 & normal, const int depth) const;
+	LightingResults GetLightingResults(const Light * const light, const Material & Material, const glm::vec3 & point, const glm::vec3 & view, const glm::vec3 & normal) const;
+	glm::vec3 GetReflectionResults(const glm::vec3 & point, const glm::vec3 & reflection, const int depth, PixelContext::Iteration * currentIteration = nullptr) const;
+	glm::vec3 GetRefractionResults(const Material & material, const glm::vec3 & point, const glm::vec3 & transmissionVector, const bool entering, const int depth, PixelContext::Iteration * currentIteration = nullptr) const;
 
-	static glm::vec3 CalculateRefractionVector(glm::vec3 const & View, glm::vec3 Normal, float const IndexOfRefraction);
+	static glm::vec3 CalculateRefractionVector(const glm::vec3 & view, glm::vec3 normal, const float ior);
 
 protected:
 
