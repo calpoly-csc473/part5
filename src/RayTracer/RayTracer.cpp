@@ -114,8 +114,8 @@ RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 			{
 				const LightingResults lighting = GetLightingResults(light, HitObject->GetMaterial(), Point, View, Normal);
 
-				Results.diffuse += LocalContribution * lighting.Diffuse;
-				Results.specular += LocalContribution * lighting.Specular;
+				Results.diffuse += LocalContribution * lighting.diffuse;
+				Results.specular += LocalContribution * lighting.specular;
 			}
 		}
 
@@ -139,7 +139,7 @@ RayTraceResults RayTracer::CastRay(Ray const & ray, int const Depth) const
 			}
 			else
 			{
-				glm::vec3 const transmissionColor = GetRefractionResults(material, Point, refractionVector, Entering, Depth, ContextIteration);
+				const glm::vec3 transmissionColor = GetRefractionResults(material, Point, refractionVector, Entering, Depth, ContextIteration);
 				Results.refraction = material.filter * transmissionColor;
 			}
 		}
@@ -203,13 +203,13 @@ LightingResults RayTracer::GetLightingResults(Light const * const light, Materia
 
 		if (brdf)
 		{
-			Results.Diffuse  = light->color * material.finish.diffuse  * material.color * brdf->CalculateDiffuse(material, surface);
-			Results.Specular = light->color * material.finish.specular * material.color * brdf->CalculateSpecular(material, surface);
+			Results.diffuse  = light->color * material.finish.diffuse  * material.color * brdf->CalculateDiffuse(material, surface);
+			Results.specular = light->color * material.finish.specular * material.color * brdf->CalculateSpecular(material, surface);
 		}
 	}
 	else
 	{
-		Results.Diffuse = material.color;
+		Results.diffuse = material.color;
 	}
 
 	return Results;

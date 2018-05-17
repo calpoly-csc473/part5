@@ -24,7 +24,7 @@ struct PixelContext
 	struct ShadowInfo
 	{
 		Ray ray;
-		bool Hit = false;
+		bool hit = false;
 	};
 
 	struct Iteration

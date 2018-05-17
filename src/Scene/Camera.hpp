@@ -21,20 +21,20 @@ public:
 	const glm::vec3 & GetRightVector() const;
 	const glm::vec3 & GetLookAt() const;
 
-	void SetPosition(glm::vec3 const & position);
-	void SetLookAt(glm::vec3 const & LookAt);
-	void SetUpVector(glm::vec3 const & upVector);
-	void SetRightVector(glm::vec3 const & rightVector);
+	void SetPosition(const glm::vec3 & position);
+	void SetLookAt(const glm::vec3 & LookAt);
+	void SetUpVector(const glm::vec3 & upVector);
+	void SetRightVector(const glm::vec3 & rightVector);
 
-	static glm::vec2 PixelToView(glm::ivec2 const & Pixel, glm::ivec2 const & ScreenSize);
-	Ray GetPixelRay(glm::ivec2 const & Pixel, glm::ivec2 const & ScreenSize) const;
+	static glm::vec2 PixelToView(const glm::ivec2 & Pixel, const glm::ivec2 & imageSize);
+	Ray GetPixelRay(const glm::ivec2 & pixel, const glm::ivec2 & imageSize) const;
 
 protected:
 
-	glm::vec3 Position = glm::vec3(0, 0, 0);
-	glm::vec3 ViewVector = glm::vec3(0, 0, 1);
-	glm::vec3 UpVector = glm::vec3(0, 1, 0);
-	glm::vec3 RightVector = glm::vec3(1, 0, 0);
-	glm::vec3 LookAt = glm::vec3(0, 0, 1);
+	glm::vec3 position = glm::vec3(0, 0, 0);
+	glm::vec3 view = glm::vec3(0, 0, 1);
+	glm::vec3 up = glm::vec3(0, 1, 0);
+	glm::vec3 right = glm::vec3(1, 0, 0);
+	glm::vec3 lookAt = glm::vec3(0, 0, 1);
 
 };

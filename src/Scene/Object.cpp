@@ -6,14 +6,14 @@
 #include "Object.hpp"
 
 
-void Object::SetID(int const ID)
+void Object::SetID(int const id)
 {
-	this->ID = ID;
+	this->id = id;
 }
 
 int Object::GetID() const
 {
-	return ID;
+	return id;
 }
 
 Material & Object::GetMaterial()

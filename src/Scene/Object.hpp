@@ -24,7 +24,7 @@ public:
 
 	Object() = default;
 
-	void SetID(int const ID);
+	void SetID(int const id);
 	int GetID() const;
 
 	Material & GetMaterial();
@@ -37,6 +37,6 @@ public:
 protected:
 
 	Material material;
-	int ID = -1;
+	int id = -1;
 
 };

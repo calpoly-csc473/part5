@@ -24,8 +24,8 @@
 
 struct LightingResults
 {
-	glm::vec3 Diffuse;
-	glm::vec3 Specular;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
 };
 
 class RayTracer

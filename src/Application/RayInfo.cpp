@@ -69,7 +69,7 @@ void PrintIterationInfo(std::string const & ParentPrefix, IterationTreeNode * No
 			int i = 0;
 			for (auto const & ShadowInfo : Iteration->shadowRays)
 			{
-				std::cout << p << "   ShadowRay [" << (i++) << "]: " << ShadowInfo.ray << (ShadowInfo.Hit ? " (in shadow)" : "") << std::endl;
+				std::cout << p << "   ShadowRay [" << (i++) << "]: " << ShadowInfo.ray << (ShadowInfo.hit ? " (in shadow)" : "") << std::endl;
 			}
 		}
 	}

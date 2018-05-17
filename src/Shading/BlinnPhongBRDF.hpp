@@ -14,7 +14,7 @@ class BlinnPhongBRDF : public BRDF
 
 public:
 
-	virtual glm::vec3 CalculateDiffuse(Material const & material, const SurfaceVectors & surface) const;
-	virtual glm::vec3 CalculateSpecular(Material const & material, const SurfaceVectors & surface) const;
+	virtual glm::vec3 CalculateDiffuse(const Material & material, const SurfaceVectors & surface) const;
+	virtual glm::vec3 CalculateSpecular(const Material & material, const SurfaceVectors & surface) const;
 
 };

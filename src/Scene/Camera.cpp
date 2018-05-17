@@ -6,89 +6,89 @@
 #include "Camera.hpp"
 
 
-glm::vec3 const & Camera::GetPosition() const
+const glm::vec3 & Camera::GetPosition() const
 {
-	return Position;
+	return position;
 }
 
-glm::vec3 const & Camera::GetViewVector() const
+const glm::vec3 & Camera::GetViewVector() const
 {
-	return ViewVector;
+	return view;
 }
 
-glm::vec3 const & Camera::GetUpVector() const
+const glm::vec3 & Camera::GetUpVector() const
 {
-	return UpVector;
+	return up;
 }
 
-glm::vec3 const & Camera::GetRightVector() const
+const glm::vec3 & Camera::GetRightVector() const
 {
-	return RightVector;
+	return right;
 }
 
-glm::vec3 const & Camera::GetLookAt() const
+const glm::vec3 & Camera::GetLookAt() const
 {
-	return LookAt;
+	return lookAt;
 }
 
-void Camera::SetPosition(glm::vec3 const & position)
+void Camera::SetPosition(const glm::vec3 & position)
 {
-	Position = position;
+	this->position = position;
 }
 
 //#define POVRAY_BASIS_VECTORS
 
-void Camera::SetLookAt(glm::vec3 const & LookAt)
+void Camera::SetLookAt(const glm::vec3 & lookAt)
 {
-	this->LookAt = LookAt;
+	this->lookAt = lookAt;
 
 #ifdef POVRAY_BASIS_VECTORS
 	float const FocalLength = 1.f;
-	float const RightLength = glm::length(RightVector);
-	float const UpLength = glm::length(UpVector);
-	float const Handedness = glm::dot(glm::cross(UpVector, ViewVector), RightVector);
+	float const RightLength = glm::length(right);
+	float const UpLength = glm::length(up);
+	float const Handedness = glm::dot(glm::cross(up, view), right);
 
-	ViewVector = glm::normalize(LookAt - Position);
+	view = glm::normalize(lookAt - position);
 
-	RightVector = glm::normalize(glm::cross(glm::vec3(0, 1, 0), ViewVector));
-	UpVector = glm::normalize(glm::cross(ViewVector, RightVector));
+	right = glm::normalize(glm::cross(glm::vec3(0, 1, 0), view));
+	up = glm::normalize(glm::cross(view, right));
 
-	ViewVector *= FocalLength;
-	RightVector *= RightLength;
-	UpVector *= UpLength;
+	view *= FocalLength;
+	right *= RightLength;
+	up *= UpLength;
 
 	if (Handedness < 0.0)
 	{
-		RightVector *= -1;
+		right *= -1;
 	}
 #else
-	ViewVector = glm::normalize(LookAt - Position);
+	view = glm::normalize(lookAt - position);
 #endif
 }
 
-void Camera::SetUpVector(glm::vec3 const & upVector)
+void Camera::SetUpVector(const glm::vec3 & upVector)
 {
-	UpVector = upVector;
+	up = upVector;
 }
 
-void Camera::SetRightVector(glm::vec3 const & rightVector)
+void Camera::SetRightVector(const glm::vec3 & rightVector)
 {
-	RightVector = rightVector;
+	right = rightVector;
 }
 
-glm::vec2 Camera::PixelToView(glm::ivec2 const & Pixel, glm::ivec2 const & imageSize)
+glm::vec2 Camera::PixelToView(const glm::ivec2 & pixel, const glm::ivec2 & imageSize)
 {
-	return (glm::vec2(Pixel) + 0.5f) / glm::vec2(imageSize) - 0.5f;
+	return (glm::vec2(pixel) + 0.5f) / glm::vec2(imageSize) - 0.5f;
 }
 
-Ray Camera::GetPixelRay(glm::ivec2 const & Pixel, glm::ivec2 const & ScreenSize) const
+Ray Camera::GetPixelRay(const glm::ivec2 & pixel, const glm::ivec2 & ScreenSize) const
 {
 	Ray ray;
 
-	glm::vec2 const viewSpace = PixelToView(Pixel, ScreenSize);
+	glm::vec2 const viewSpace = PixelToView(pixel, ScreenSize);
 
-	ray.origin = Position;
-	ray.direction = glm::normalize(RightVector * viewSpace.x + UpVector * viewSpace.y + ViewVector);
+	ray.origin = position;
+	ray.direction = glm::normalize(right * viewSpace.x + up * viewSpace.y + view);
 
 	return ray;
 }

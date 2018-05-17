@@ -22,9 +22,9 @@ void Renderer::Draw(RayTracer * rayTracer)
 		for (int y = 0; y < imageSize.y; ++ y)
 		{
 			Pixel p = rayTracer->CastRaysForPixel(glm::ivec2(x, y));
-			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 0] = p.Red;
-			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 1] = p.Green;
-			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 2] = p.Blue;
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 0] = p.red;
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 1] = p.green;
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 2] = p.blue;
 			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 3] = 255;
 		}
 	}
@@ -61,9 +61,9 @@ void Renderer::DrawThreaded(RayTracer * rayTracer, const int numThreads)
 			int const y = pixel % imageSize.y;
 
 			Pixel p = rayTracer->CastRaysForPixel(glm::ivec2(x, y));
-			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 0] = p.Red;
-			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 1] = p.Green;
-			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 2] = p.Blue;
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 0] = p.red;
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 1] = p.green;
+			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 2] = p.blue;
 			imageBuffer[x * 4 + (imageSize.y - 1 - y) * 4 * imageSize.x + 3] = 255;
 		}
 

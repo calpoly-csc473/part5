@@ -33,8 +33,8 @@ public:
 
 	Scene() = default;
 
-	Object * AddObject(Object * Object);
-	Light * AddLight(Light * Light);
+	Object * AddObject(Object * object);
+	Light * AddLight(Light * light);
 
 	std::vector<Object *> & GetObjects();
 	std::vector<Light *> & GetLights();
@@ -42,8 +42,8 @@ public:
 	const Camera & GetCamera() const;
 	Camera & GetCamera();
 
-	bool IsLightOccluded(const glm::vec3 & Point, const glm::vec3 & LightPosition, PixelContext::Iteration * CurrentIteration = nullptr) const;
-	RayHitResults GetRayHitResults(const Ray & Ray) const;
+	bool IsLightOccluded(const glm::vec3 & point, const glm::vec3 & lightPosition, PixelContext::Iteration * currentIteration = nullptr) const;
+	RayHitResults GetRayHitResults(const Ray & ray) const;
 
 protected:
 

@@ -16,5 +16,5 @@ struct Pixel
 
 	friend std::ostream & operator << (std::ostream & stream, Pixel const & pixel);
 
-	unsigned char Red = 0, Green = 0, Blue = 0;
+	unsigned char red = 0, green = 0, blue = 0;
 };

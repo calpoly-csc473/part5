@@ -39,26 +39,26 @@ Camera & Scene::GetCamera()
 	return camera;
 }
 
-bool Scene::IsLightOccluded(glm::vec3 const & Point, glm::vec3 const & LightPosition, PixelContext::Iteration * CurrentIteration) const
+bool Scene::IsLightOccluded(const glm::vec3 & point, const glm::vec3 & lightPosition, PixelContext::Iteration * currentIteration) const
 {
-	glm::vec3 const LightVector = glm::normalize(LightPosition - Point);
-	float const LightDistance = glm::length(LightPosition - Point);
-	Ray const ray = Ray(Point, LightVector);
+	const glm::vec3 lightVector = glm::normalize(lightPosition - point);
+	const float lightDistance = glm::length(lightPosition - point);
+	const Ray ray = Ray(point, lightVector);
 
-	if (CurrentIteration)
+	if (currentIteration)
 	{
-		CurrentIteration->shadowRays.push_back(PixelContext::ShadowInfo());
-		CurrentIteration->shadowRays.back().ray = ray;
+		currentIteration->shadowRays.push_back(PixelContext::ShadowInfo());
+		currentIteration->shadowRays.back().ray = ray;
 	}
 
 	for (auto Object : objects)
 	{
 		const float t = Object->Intersect(ray);
-		if (t >= 0.f && t < LightDistance)
+		if (t >= 0.f && t < lightDistance)
 		{
-			if (CurrentIteration)
+			if (currentIteration)
 			{
-				CurrentIteration->shadowRays.back().Hit = true;
+				currentIteration->shadowRays.back().hit = true;
 			}
 			return true;
 		}
@@ -67,7 +67,7 @@ bool Scene::IsLightOccluded(glm::vec3 const & Point, glm::vec3 const & LightPosi
 	return false;
 }
 
-RayHitResults Scene::GetRayHitResults(Ray const & ray) const
+RayHitResults Scene::GetRayHitResults(const Ray & ray) const
 {
 	RayHitResults results;
 
