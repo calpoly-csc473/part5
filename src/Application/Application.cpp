@@ -29,7 +29,7 @@ void Application::ReadArguments(int argc, char ** argv)
 {
 	for (int i = 0; i < argc; ++ i)
 	{
-		CommandArguments.push_back(argv[i]);
+		commandArguments.push_back(argv[i]);
 	}
 }
 
@@ -50,21 +50,21 @@ int Application::Run()
 
 void Application::PrintUsage()
 {
-	if (! CommandArguments.size())
+	if (! commandArguments.size())
 	{
 		printf("No command arguments found.\n");
 		printf("usage: raytracer <command> <file_name> [arguments ...]\n");
 		return;
 	}
 
-	if (CommandArguments.size() < 3)
+	if (commandArguments.size() < 3)
 	{
-		printf("usage: %s <command> <file_name> [arguments ...]\n", CommandArguments[0].c_str());
+		printf("usage: %s <command> <file_name> [arguments ...]\n", commandArguments[0].c_str());
 		return;
 	}
 
-	std::string const ProgramName = CommandArguments[0];
-	std::string const Command = CommandArguments[1];
+	std::string const ProgramName = commandArguments[0];
+	std::string const Command = commandArguments[1];
 
 	if (Command == "render")
 	{
@@ -90,20 +90,20 @@ void Application::PrintUsage()
 
 void Application::RunCommands()
 {
-	if (CommandArguments.size() < 2)
+	if (commandArguments.size() < 2)
 	{
 		throw std::invalid_argument("Insufficient arguments.");
 	}
 
-	std::string const ProgramName = CommandArguments[0];
-	std::string const Command = CommandArguments[1];
+	std::string const ProgramName = commandArguments[0];
+	std::string const Command = commandArguments[1];
 
-	if (CommandArguments.size() < 3)
+	if (commandArguments.size() < 3)
 	{
 		throw std::invalid_argument("Insufficient arguments.");
 	}
 
-	fileName = CommandArguments[2];
+	fileName = commandArguments[2];
 
 	std::cout << std::setiosflags(std::ios::fixed);
 	std::cout << std::setprecision(4);
@@ -127,13 +127,13 @@ void Application::RunCommands()
 	scene = LoadPovrayScene(fileName);
 	rayTracer = new RayTracer(scene);
 
-	if (CommandArguments.size() < 5)
+	if (commandArguments.size() < 5)
 	{
 		throw std::invalid_argument("Insufficient arguments.");
 	}
 
-	params.imageSize.x = std::stoi(CommandArguments[3]);
-	params.imageSize.y = std::stoi(CommandArguments[4]);
+	params.imageSize.x = std::stoi(commandArguments[3]);
+	params.imageSize.y = std::stoi(commandArguments[4]);
 
 	params.useShading = true;
 	params.useShadows = true;
@@ -161,13 +161,13 @@ void Application::RunCommands()
 	// Pixel Commands //
 	////////////////////
 
-	if (CommandArguments.size() < 7)
+	if (commandArguments.size() < 7)
 	{
 		throw std::invalid_argument("Insufficient arguments.");
 	}
 
-	int const X = std::stoi(CommandArguments[5]);
-	int const Y = std::stoi(CommandArguments[6]);
+	int const X = std::stoi(commandArguments[5]);
+	int const Y = std::stoi(commandArguments[6]);
 
 	ParseExtraParams(7);
 	rayTracer->SetParams(params);
@@ -241,9 +241,9 @@ void Application::RunCommands()
 void Application::ParseExtraParams(size_t const StartIndex)
 {
 	std::string Remainder;
-	for (size_t i = StartIndex; i < CommandArguments.size(); ++ i)
+	for (size_t i = StartIndex; i < commandArguments.size(); ++ i)
 	{
-		std::string const & Arg = CommandArguments[i];
+		std::string const & Arg = commandArguments[i];
 		if (Arg == "-altbrdf")
 		{
 			params.useCookTorrance = true;

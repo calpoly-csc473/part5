@@ -31,7 +31,7 @@ protected:
 
 	static Scene * LoadPovrayScene(const std::string & fileName);
 
-	std::vector<std::string> CommandArguments;
+	std::vector<std::string> commandArguments;
 
 	Scene * scene = nullptr;
 	RayTracer * rayTracer = nullptr;
