@@ -285,5 +285,5 @@ glm::vec3 RayTracer::CalculateRefractionVector(const glm::vec3 & view, glm::vec3
 		return glm::vec3(0.f, 0.f, 0.f);
 	}
 
-	return glm::normalize((-view * iorRatio) + normal * (iorRatio * c1 - sqrt(c2)));
+	return glm::normalize((-view * iorRatio) + normal * (iorRatio * c1 - glm::sqrt(c2)));
 }
