@@ -19,12 +19,12 @@ Light * Scene::AddLight(Light * light)
 	return light;
 }
 
-std::vector<Object *> & Scene::GetObjects()
+const std::vector<Object *> & Scene::GetObjects() const
 {
 	return objects;
 }
 
-std::vector<Light *> & Scene::GetLights()
+const std::vector<Light *> & Scene::GetLights() const
 {
 	return lights;
 }

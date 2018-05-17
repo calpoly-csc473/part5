@@ -36,8 +36,8 @@ public:
 	Object * AddObject(Object * object);
 	Light * AddLight(Light * light);
 
-	std::vector<Object *> & GetObjects();
-	std::vector<Light *> & GetLights();
+	const std::vector<Object *> & GetObjects() const;
+	const std::vector<Light *> & GetLights() const;
 
 	const Camera & GetCamera() const;
 	Camera & GetCamera();
