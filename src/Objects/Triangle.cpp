@@ -5,8 +5,6 @@
 
 #include "Triangle.hpp"
 
-#include <glm/gtc/epsilon.hpp>
-
 
 Triangle::Triangle(const glm::vec3 & v1, const glm::vec3 & v2, const glm::vec3 & v3)
 {
@@ -19,8 +17,6 @@ Triangle::Triangle(const glm::vec3 & v1, const glm::vec3 & v2, const glm::vec3 &
 
 float Triangle::Intersect(const Ray & ray) const
 {
-	static const float epsilon = 0.0001f;
-
 	const glm::vec3 abc = v1 - v2;
 	const glm::vec3 def = v1 - v3;
 	const glm::vec3 ghi = ray.direction;
@@ -32,7 +28,7 @@ float Triangle::Intersect(const Ray & ray) const
 
 	const float denom = abc.x * ei_hf + abc.y * gf_di + abc.z * dh_eg;
 
-	if (glm::epsilonEqual(denom, 0.f, epsilon))
+	if (denom == 0.f)
 		return -1;
 
 	const float beta = (jkl.x * ei_hf + jkl.y * gf_di + jkl.z * dh_eg) / denom;
