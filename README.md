@@ -43,7 +43,7 @@ The source code of this project is organized into folders by general topic.
     - [RayTraceResults](src/RayTracer/RayTraceResults.hpp) stores the individual contributions (e.g. diffuse, specular, reflection, etc.) from a single ray trace.
       These are stored separately primarily for diagnostic purposes.
     - [PixelContext](src/RayTracer/PixelContext.hpp) stores diagnostic information about every action involved in a single ray trace,
-      for the purposes of implementing commands like `pixeltrace`.
+      for the purposes of implementing commands like `printrays` and `pixeltrace`.
 - [`Scene/`](src/Scene/) contains the fundamental parts of a scene description.
   - [Scene](src/Scene/Scene.hpp) stores a list of objects, lights, and a camera with utilities for querying ray intersection.
   - [Camera](src/Scene/Camera.hpp) represents the scene camera and generates rays for a given pixel.
@@ -77,4 +77,8 @@ you are legally free to use the software in whatever capacity you desire (includ
 For more information, give this a read: [https://opensource.org/faq](https://opensource.org/faq)
 
 ---
+
+**Q:** You must like the word `const`.
+
+[Yes, I do.](https://isocpp.org/wiki/faq/const-correctness)
 
