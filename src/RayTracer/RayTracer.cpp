@@ -138,7 +138,7 @@ RayTraceResults RayTracer::CastRay(const Ray & ray, const int depth) const
 			else
 			{
 				const glm::vec3 transmissionColor = GetRefractionResults(material, entering ? point - normal*surfaceEpsilon : point + normal*surfaceEpsilon, transmissionVector, entering, depth, contextIteration);
-				results.refraction = material.filter * transmissionColor;
+				results.refraction = transmissionContribution * transmissionColor;
 			}
 		}
 
