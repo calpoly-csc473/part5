@@ -245,6 +245,10 @@ void Application::ParseExtraParams(size_t const StartIndex)
 		{
 			params.debugNormals = true;
 		}
+		else if (Arg == "-fresnel")
+		{
+			params.useFresnel = true;
+		}
 	}
 }
 

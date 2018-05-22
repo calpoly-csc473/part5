@@ -87,9 +87,12 @@ RayTraceResults RayTracer::CastRay(const Ray & ray, const int depth) const
 		// Contributions //
 		///////////////////
 
+		float const f0 = pow((material.finish.ior - 1) / (material.finish.ior + 1), 2.f);
+		float const fresnelReflectance = params.useFresnel ? f0 + (1 - f0) * pow(1 - glm::abs(glm::dot(normal, view)), 5.f) : 0.f;
+
 		float const localContribution = (1.f - material.filter) * (1.f - material.finish.reflection);
-		float transmissionContribution = material.filter;
-		float reflectionContribution = (1.f - material.filter) * (material.finish.reflection);
+		float reflectionContribution = (1.f - material.filter) * (material.finish.reflection) + material.filter * fresnelReflectance;
+		float transmissionContribution = material.filter * (1 - fresnelReflectance);
 
 
 		///////////////////

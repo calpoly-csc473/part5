@@ -18,6 +18,7 @@ struct Params
 
 	bool useReflections = true;
 	bool useRefractions = true;
+	bool useFresnel = false;
 
 	int recursiveDepth = 6;
 
