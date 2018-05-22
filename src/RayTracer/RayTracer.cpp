@@ -55,7 +55,7 @@ Pixel RayTracer::CastRaysForPixel(const glm::ivec2 & pixel) const
 
 RayTraceResults RayTracer::CastRay(const Ray & ray, const int depth) const
 {
-	const float surfaceEpsilon = 0.0001f;
+	const float surfaceEpsilon = 0.001f;
 
 	RayTraceResults results;
 
@@ -149,8 +149,11 @@ RayTraceResults RayTracer::CastRay(const Ray & ray, const int depth) const
 
 		if (params.useReflections && reflectionContribution > 0.f)
 		{
+			const bool insideShape = glm::dot(normal, view) < 0.f;
+			const glm::vec3 surfacePoint = insideShape ? point - normal*surfaceEpsilon : point + normal*surfaceEpsilon;
+
 			const glm::vec3 reflectionVector = glm::normalize(normal * glm::dot(view, normal) * 2.f - view);
-			const glm::vec3 reflectionColor = material.color * GetReflectionResults(point + normal*surfaceEpsilon, reflectionVector, depth, contextIteration);
+			const glm::vec3 reflectionColor = material.color * GetReflectionResults(surfacePoint, reflectionVector, depth, contextIteration);
 			results.reflection = reflectionContribution * reflectionColor;
 		}
 
