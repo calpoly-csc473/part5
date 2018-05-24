@@ -18,6 +18,7 @@
 #include <parser/Tokenizer.hpp>
 #include <parser/Parser.hpp>
 
+#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -293,6 +294,34 @@ Scene * Application::LoadPovrayScene(const std::string & fileName)
 
 		if (object)
 		{
+			glm::mat4 transform = glm::mat4(1.f);
+
+			for (const parser::Transform & t : o.attributes.transforms)
+			{
+				switch (t.type)
+				{
+				case parser::Transform::Type::Translate:
+					transform = glm::translate(glm::mat4(1.f), t.quantity) * transform;
+					break;
+
+				case parser::Transform::Type::Scale:
+					transform = glm::scale(glm::mat4(1.f), t.quantity) * transform;
+					break;
+
+				case parser::Transform::Type::Rotate:
+				{
+					glm::mat4 rotation;
+
+					rotation = glm::rotate(glm::mat4(1.f), glm::radians(t.quantity.z), glm::vec3(0, 0, 1)) * rotation;
+					rotation = glm::rotate(glm::mat4(1.f), glm::radians(t.quantity.y), glm::vec3(0, 1, 0)) * rotation;
+					rotation = glm::rotate(glm::mat4(1.f), glm::radians(t.quantity.x), glm::vec3(1, 0, 0)) * rotation;
+
+					transform = rotation * transform;
+				}
+				}
+			}
+
+			object->SetModelMatrix(transform);
 			object->GetMaterial().finish = o.attributes.finish;
 			object->GetMaterial().color = glm::vec3(o.attributes.pigment.x, o.attributes.pigment.y, o.attributes.pigment.z);
 			object->GetMaterial().filter = o.attributes.pigment.w;

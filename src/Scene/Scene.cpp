@@ -53,7 +53,7 @@ bool Scene::IsLightOccluded(const glm::vec3 & point, const glm::vec3 & lightPosi
 
 	for (auto Object : objects)
 	{
-		const float t = Object->Intersect(ray);
+		const float t = Object->IntersectTransformed(ray);
 		if (t >= 0.f && t < lightDistance)
 		{
 			if (currentIteration)
@@ -73,7 +73,7 @@ RayHitResults Scene::GetRayHitResults(const Ray & ray) const
 
 	for (const Object * object : objects)
 	{
-		const float t = object->Intersect(ray);
+		const float t = object->IntersectTransformed(ray);
 		if (t >= 0.f)
 		{
 			if (! results.object || t < results.t)
@@ -87,7 +87,7 @@ RayHitResults Scene::GetRayHitResults(const Ray & ray) const
 	if (results.object)
 	{
 		results.point = ray.GetPoint(results.t);
-		results.normal = results.object->CalculateNormal(results.point);
+		results.normal = results.object->CalculateNormalTransformed(results.point);
 	}
 
 	return results;

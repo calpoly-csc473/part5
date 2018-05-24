@@ -25,3 +25,22 @@ Material const & Object::GetMaterial() const
 {
 	return material;
 }
+
+void Object::SetModelMatrix(glm::mat4 const & modelMatrix)
+{
+	inverseModelMatrix = glm::inverse(modelMatrix);
+	normalMatrix = glm::transpose(inverseModelMatrix);
+}
+
+float Object::IntersectTransformed(Ray const & ray) const
+{
+	return Intersect(ray * inverseModelMatrix);
+}
+
+glm::vec3 Object::CalculateNormalTransformed(glm::vec3 const & intersectionPoint) const
+{
+	const glm::vec3 objectSpaceIntersection = glm::vec3(inverseModelMatrix * glm::vec4(intersectionPoint, 1.f));
+	const glm::vec3 objectSpaceNormal = CalculateNormal(objectSpaceIntersection);
+
+	return glm::normalize(glm::vec3(normalMatrix * glm::vec4(objectSpaceNormal, 0.f)));
+}

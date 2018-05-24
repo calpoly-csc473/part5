@@ -36,6 +36,14 @@ public:
 		return origin + time * direction;
 	}
 
+	Ray operator * (glm::mat4 const & m) const
+	{
+		Ray r;
+		r.origin = glm::vec3(m * glm::vec4(origin, 1.f));
+		r.direction = glm::vec3(m * glm::vec4(direction, 0.f));
+		return r;
+	}
+
 	bool operator == (Ray const & other) const
 	{
 		return origin == other.origin && direction == other.direction;
