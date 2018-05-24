@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(part3)
+project(part4)
 
 if(WIN32)
 else()
