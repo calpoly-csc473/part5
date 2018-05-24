@@ -250,6 +250,10 @@ void Application::ParseExtraParams(size_t const StartIndex)
 		{
 			params.useFresnel = true;
 		}
+		else if (Arg == "-beers")
+		{
+			params.useBeers = true;
+		}
 	}
 }
 

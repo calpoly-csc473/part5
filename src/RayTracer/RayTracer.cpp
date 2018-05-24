@@ -266,7 +266,21 @@ glm::vec3 RayTracer::GetRefractionResults(const Material & material, const glm::
 
 		if (entering)
 		{
-			return results.ToColor() * material.color;
+			if (params.useBeers)
+			{
+				// Beer's Law
+				const float distance = glm::distance(point, results.intersectionPoint);
+
+				const float density = 0.15f;
+				const glm::vec3 absorbance = (glm::vec3(1.f) - material.color) * 0.15f * -distance;
+				const glm::vec3 attenuation = glm::vec3(expf(absorbance.x), expf(absorbance.y), expf(absorbance.z));
+
+				return results.ToColor() * attenuation;
+			}
+			else
+			{
+				return results.ToColor() * material.color;
+			}
 		}
 		else
 		{
