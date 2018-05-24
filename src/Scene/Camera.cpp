@@ -81,11 +81,11 @@ glm::vec2 Camera::PixelToView(const glm::ivec2 & pixel, const glm::ivec2 & image
 	return (glm::vec2(pixel) + 0.5f) / glm::vec2(imageSize) - 0.5f;
 }
 
-Ray Camera::GetPixelRay(const glm::ivec2 & pixel, const glm::ivec2 & ScreenSize) const
+Ray Camera::GetPixelRay(const glm::ivec2 & pixel, const glm::ivec2 & ScreenSize, const glm::ivec2 & sample, const int sampleCount) const
 {
 	Ray ray;
 
-	glm::vec2 const viewSpace = PixelToView(pixel, ScreenSize);
+	glm::vec2 const viewSpace = PixelToView(pixel * sampleCount + sample, ScreenSize * sampleCount);
 
 	ray.origin = position;
 	ray.direction = glm::normalize(right * viewSpace.x + up * viewSpace.y + view);

@@ -233,26 +233,48 @@ void Application::RunCommands()
 	throw std::invalid_argument("Unknown command.");
 }
 
+bool StringBeginsWith(const std::string & s, const std::string & prefix, std::string & remainder)
+{
+	if (s.size() < prefix.size())
+	{
+		return false;
+	}
+
+	if (s.substr(0, prefix.size()) == prefix)
+	{
+		remainder = s.substr(prefix.size());
+		return true;
+	}
+
+	return false;
+}
+
 void Application::ParseExtraParams(size_t const StartIndex)
 {
 	for (size_t i = StartIndex; i < commandArguments.size(); ++ i)
 	{
-		std::string const & Arg = commandArguments[i];
-		if (Arg == "-altbrdf")
+		std::string const & argument = commandArguments[i];
+		std::string remainder;
+
+		if (argument == "-altbrdf")
 		{
 			params.useCookTorrance = true;
 		}
-		else if (Arg == "-normals")
+		else if (argument == "-normals")
 		{
 			params.debugNormals = true;
 		}
-		else if (Arg == "-fresnel")
+		else if (argument == "-fresnel")
 		{
 			params.useFresnel = true;
 		}
-		else if (Arg == "-beers")
+		else if (argument == "-beers")
 		{
 			params.useBeers = true;
+		}
+		else if (StringBeginsWith(argument, "-ss=", remainder))
+		{
+			params.superSampling = std::stoi(remainder);
 		}
 	}
 }

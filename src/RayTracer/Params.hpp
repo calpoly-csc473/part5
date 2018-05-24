@@ -22,6 +22,7 @@ struct Params
 	bool useBeers = false;
 
 	int recursiveDepth = 6;
+	int superSampling = 1;
 
 	bool debugNormals = false;
 };

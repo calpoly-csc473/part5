@@ -27,7 +27,8 @@ public:
 	void SetRightVector(const glm::vec3 & rightVector);
 
 	static glm::vec2 PixelToView(const glm::ivec2 & Pixel, const glm::ivec2 & imageSize);
-	Ray GetPixelRay(const glm::ivec2 & pixel, const glm::ivec2 & imageSize) const;
+	Ray GetPixelRay(const glm::ivec2 & pixel, const glm::ivec2 & imageSize,
+		const glm::ivec2 & sample = glm::ivec2(0), const int sampleCount = 1) const;
 
 protected:
 

@@ -41,16 +41,28 @@ const Params & RayTracer::GetParams() const
 
 Pixel RayTracer::CastRaysForPixel(const glm::ivec2 & pixel) const
 {
-	Ray const ray = scene->GetCamera().GetPixelRay(pixel, params.imageSize);
+	glm::vec3 color = glm::vec3(0.f);
 
-	if (context)
+	for (int i = 0; i < params.superSampling; ++ i)
 	{
-		context->iterations.push_back(new PixelContext::Iteration());
-		context->iterations.back()->type = PixelContext::IterationType::Primary;
-		context->iterations.back()->parent = nullptr;
+		for (int j = 0; j < params.superSampling; ++ j)
+		{
+			Ray const ray = scene->GetCamera().GetPixelRay(pixel, params.imageSize, glm::ivec2(i, j), params.superSampling);
+
+			if (context)
+			{
+				context->iterations.push_back(new PixelContext::Iteration());
+				context->iterations.back()->type = PixelContext::IterationType::Primary;
+				context->iterations.back()->parent = nullptr;
+			}
+
+			color += CastRay(ray, params.recursiveDepth).ToColor();
+		}
 	}
 
-	return Pixel(CastRay(ray, params.recursiveDepth).ToColor());
+	color /= (float) glm::pow(params.superSampling, 2.f);
+
+	return Pixel(color);
 }
 
 RayTraceResults RayTracer::CastRay(const Ray & ray, const int depth) const
