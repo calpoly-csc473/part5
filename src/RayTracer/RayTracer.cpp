@@ -60,7 +60,7 @@ Pixel RayTracer::CastRaysForPixel(const glm::ivec2 & pixel) const
 		}
 	}
 
-	color /= (float) glm::pow(params.superSampling, 2.f);
+	color /= glm::pow((float) params.superSampling, 2.f);
 
 	return Pixel(color);
 }
