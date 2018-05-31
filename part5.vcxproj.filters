@@ -76,6 +76,9 @@
     <ClCompile Include="src\Scene\Object.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Objects\Box.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\parser\Objects.hpp">
@@ -155,6 +158,9 @@
     </ClInclude>
     <ClInclude Include="src\Scene\Object.hpp">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Objects\Box.hpp">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

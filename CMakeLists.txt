@@ -24,6 +24,7 @@ set(SOURCES
 	src/Application/RayInfo.cpp
 	src/Application/Renderer.cpp
 	src/Application/SceneInfo.cpp
+	src/Objects/Box.cpp
 	src/Objects/Plane.cpp
 	src/Objects/Sphere.cpp
 	src/Objects/Triangle.cpp
@@ -42,6 +43,7 @@ set(HEADERS
 	src/Application/RayInfo.hpp
 	src/Application/Renderer.hpp
 	src/Application/SceneInfo.hpp
+	src/Objects/Box.hpp
 	src/Objects/Plane.hpp
 	src/Objects/Sphere.hpp
 	src/Objects/Triangle.hpp

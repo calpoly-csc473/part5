@@ -70,6 +70,7 @@
     <ClCompile Include="src\Application\RayInfo.cpp" />
     <ClCompile Include="src\Application\Renderer.cpp" />
     <ClCompile Include="src\Application\SceneInfo.cpp" />
+    <ClCompile Include="src\Objects\Box.cpp" />
     <ClCompile Include="src\Objects\Plane.cpp" />
     <ClCompile Include="src\Objects\Sphere.cpp" />
     <ClCompile Include="src\Objects\Triangle.cpp" />
@@ -92,6 +93,7 @@
     <ClInclude Include="src\Application\RayInfo.hpp" />
     <ClInclude Include="src\Application\Renderer.hpp" />
     <ClInclude Include="src\Application\SceneInfo.hpp" />
+    <ClInclude Include="src\Objects\Box.hpp" />
     <ClInclude Include="src\Objects\Plane.hpp" />
     <ClInclude Include="src\Objects\Sphere.hpp" />
     <ClInclude Include="src\Objects\Triangle.hpp" />

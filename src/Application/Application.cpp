@@ -14,6 +14,7 @@
 #include <Objects/Sphere.hpp>
 #include <Objects/Plane.hpp>
 #include <Objects/Triangle.hpp>
+#include <Objects/Box.hpp>
 
 #include <parser/Tokenizer.hpp>
 #include <parser/Parser.hpp>
@@ -310,7 +311,7 @@ Scene * Application::LoadPovrayScene(const std::string & fileName)
 			break;
 
 		case parser::Object::Type::Box:
-			std::cerr << "Box objects not supported." << std::endl;
+			object = new Box(o.v1, o.v2);
 			break;
 
 		case parser::Object::Type::Cone:
