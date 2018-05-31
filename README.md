@@ -1,14 +1,14 @@
 
-# CSC 473 Part 4 Implementation
+# CSC 473 Part 5 Implementation
 
 [![Build Status](https://travis-ci.org/calpoly-csc473/part4.svg?branch=master)](https://travis-ci.org/calpoly-csc473/part4)
 
-This is an implementation of [Part 4](https://iondune.github.io/csc473/project/part4) of the CSC 473 raytracer project.
-You have the option of using this as the basis for your Part 5 through Part 7 projects in this class.
+This is an implementation of [Part 5](https://iondune.github.io/csc473/project/part5) of the CSC 473 raytracer project.
+You have the option of using this as the basis for your Part 6 through Part 7 projects in this class.
 
 Due to the flexible nature of deadlines in this class,
 it's important to note that this code may not be used in any
-submissions for part 1, 2, 3, or 4 of the raytracer project.
+submissions for part 1, 2, 3, 4, or 5 of the raytracer project.
 You can look at this project, but for the purposes of those first three parts,
 this code is the same as any other source on the internet - it can be read and learned from,
 but not copy-and-pasted.
