@@ -56,7 +56,7 @@ float Box::Intersect(const Ray & ray) const
 
 glm::vec3 Box::CalculateNormal(glm::vec3 const & intersectionPoint) const
 {
-	static const float epsilon = 0.01f;
+	static const float epsilon = 0.001f;
 
 	glm::vec3 normal;
 
