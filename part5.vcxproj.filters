@@ -82,6 +82,9 @@
     <ClCompile Include="src\Scene\AABB.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Scene\BoundingVolumeNode.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\parser\Objects.hpp">
@@ -166,6 +169,9 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene\AABB.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene\BoundingVolumeNode.hpp">
       <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>

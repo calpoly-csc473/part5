@@ -47,6 +47,16 @@ glm::vec3 Sphere::CalculateNormal(glm::vec3 const & intersectionPoint) const
 	return glm::normalize(intersectionPoint - center);
 }
 
+AABB Sphere::ComputeBoundingBox() const
+{
+	return AABB(center - glm::vec3(radius), center + glm::vec3(radius));
+}
+
+glm::vec3 Sphere::GetCenter() const
+{
+	return center;
+}
+
 std::string Sphere::GetObjectType() const
 {
 	return "Sphere";

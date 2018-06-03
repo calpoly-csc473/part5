@@ -33,7 +33,7 @@ class RayTracer
 
 public:
 
-	RayTracer(const Scene * scene);
+	RayTracer(Scene * scene);
 
 	void SetDebugContext(PixelContext * context);
 	void SetParams(const Params & params);
@@ -51,7 +51,7 @@ public:
 protected:
 
 	Params params;
-	const Scene * scene = nullptr;
+	Scene * scene = nullptr;
 	BRDF * brdf = nullptr;
 
 	PixelContext * context = nullptr;

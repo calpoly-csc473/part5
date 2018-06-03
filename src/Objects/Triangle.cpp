@@ -58,6 +58,20 @@ glm::vec3 Triangle::CalculateNormal(glm::vec3 const & intersectionPoint) const
 	return normal;
 }
 
+AABB Triangle::ComputeBoundingBox() const
+{
+	AABB aabb;
+	aabb.Reset(v1);
+	aabb.AddPoint(v2);
+	aabb.AddPoint(v3);
+	return aabb;
+}
+
+glm::vec3 Triangle::GetCenter() const
+{
+	return (v1 + v2 + v3) / 3.f;
+}
+
 std::string Triangle::GetObjectType() const
 {
 	return "Triangle";

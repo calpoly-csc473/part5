@@ -17,6 +17,8 @@ public:
 	Box(const glm::vec3 & min, const glm::vec3 & max);
 	float Intersect(const Ray & ray) const;
 	glm::vec3 CalculateNormal(glm::vec3 const & intersectionPoint) const;
+	AABB ComputeBoundingBox() const;
+	glm::vec3 GetCenter() const;
 	std::string GetObjectType() const;
 
 protected:

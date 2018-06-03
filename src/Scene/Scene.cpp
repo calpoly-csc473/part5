@@ -5,6 +5,8 @@
 
 #include "Scene.hpp"
 
+#include <algorithm>
+
 
 Object * Scene::AddObject(Object * object)
 {
@@ -51,6 +53,24 @@ bool Scene::IsLightOccluded(const glm::vec3 & point, const glm::vec3 & lightPosi
 		currentIteration->shadowRays.back().ray = ray;
 	}
 
+	if (spatialDataStructure)
+	{
+		float t;
+		const Object * object = nullptr;
+
+		if (spatialDataStructure->Intersect(ray, t, object))
+		{
+			if (t >= 0.f && t < lightDistance)
+			{
+				if (currentIteration)
+				{
+					currentIteration->shadowRays.back().hit = true;
+				}
+				return true;
+			}
+		}
+	}
+
 	for (auto Object : objects)
 	{
 		const float t = Object->IntersectTransformed(ray);
@@ -70,6 +90,18 @@ bool Scene::IsLightOccluded(const glm::vec3 & point, const glm::vec3 & lightPosi
 RayHitResults Scene::GetRayHitResults(const Ray & ray) const
 {
 	RayHitResults results;
+
+	if (spatialDataStructure)
+	{
+		float t;
+		const Object * object = nullptr;
+
+		if (spatialDataStructure->Intersect(ray, t, object))
+		{
+			results.object = object;
+			results.t = t;
+		}
+	}
 
 	for (const Object * object : objects)
 	{
@@ -91,4 +123,24 @@ RayHitResults Scene::GetRayHitResults(const Ray & ray) const
 	}
 
 	return results;
+}
+
+void Scene::BuildSpatialDataStructure()
+{
+	std::vector<const Object *> nonPlane;
+
+	for (Object * & object : objects)
+	{
+		if (object->GetObjectType() != "Plane")
+		{
+			nonPlane.push_back(object);
+			object = nullptr;
+		}
+	}
+
+	// Remove all nullptrs
+	objects.erase(std::remove(objects.begin(), objects.end(), nullptr), objects.end());
+
+	spatialDataStructure = new BoundingVolumeNode(nonPlane);
+	spatialDataStructure->BuildTree(0);
 }

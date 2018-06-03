@@ -28,6 +28,7 @@ Material const & Object::GetMaterial() const
 
 void Object::SetModelMatrix(glm::mat4 const & modelMatrix)
 {
+	this->modelMatrix = modelMatrix;
 	inverseModelMatrix = glm::inverse(modelMatrix);
 	normalMatrix = glm::transpose(inverseModelMatrix);
 }
@@ -43,4 +44,11 @@ glm::vec3 Object::CalculateNormalTransformed(glm::vec3 const & intersectionPoint
 	const glm::vec3 objectSpaceNormal = CalculateNormal(objectSpaceIntersection);
 
 	return glm::normalize(glm::vec3(normalMatrix * glm::vec4(objectSpaceNormal, 0.f)));
+}
+
+AABB Object::ComputeBoundingBoxTransformed() const
+{
+	AABB box = ComputeBoundingBox();
+	box.Transform(modelMatrix);
+	return box;
 }

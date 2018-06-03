@@ -16,6 +16,8 @@ public:
 	Plane(const glm::vec3 & n, const float d);
 	float Intersect(const Ray & ray) const;
 	glm::vec3 CalculateNormal(glm::vec3 const & intersectionPoint) const;
+	AABB ComputeBoundingBox() const;
+	glm::vec3 GetCenter() const;
 	std::string GetObjectType() const;
 
 protected:

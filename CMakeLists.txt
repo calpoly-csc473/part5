@@ -32,6 +32,7 @@ set(SOURCES
 	src/RayTracer/RayTracer.cpp
 	src/RayTracer/Util.cpp
 	src/Scene/AABB.cpp
+	src/Scene/BoundingVolumeNode.cpp
 	src/Scene/Camera.cpp
 	src/Scene/Object.cpp
 	src/Scene/Scene.cpp
@@ -56,6 +57,7 @@ set(HEADERS
 	src/RayTracer/RayTraceResults.hpp
 	src/RayTracer/Util.hpp
 	src/Scene/AABB.hpp
+	src/Scene/BoundingVolumeNode.hpp
 	src/Scene/Camera.hpp
 	src/Scene/Light.hpp
 	src/Scene/Object.hpp

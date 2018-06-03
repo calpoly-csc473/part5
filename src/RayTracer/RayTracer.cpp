@@ -10,7 +10,7 @@
 #include <Shading/CookTorranceBRDF.hpp>
 
 
-RayTracer::RayTracer(const Scene * scene)
+RayTracer::RayTracer(Scene * scene)
 {
 	this->scene = scene;
 }
@@ -31,6 +31,11 @@ void RayTracer::SetParams(const Params & params)
 	else
 	{
 		brdf = new BlinnPhongBRDF();
+	}
+
+	if (params.useSpatialDataStructure)
+	{
+		scene->BuildSpatialDataStructure();
 	}
 }
 

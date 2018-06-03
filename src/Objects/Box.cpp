@@ -39,6 +39,16 @@ glm::vec3 Box::CalculateNormal(glm::vec3 const & intersectionPoint) const
 	return normal;
 }
 
+AABB Box::ComputeBoundingBox() const
+{
+	return aabb;
+}
+
+glm::vec3 Box::GetCenter() const
+{
+	return (aabb.min + aabb.max) / 2.f;
+}
+
 std::string Box::GetObjectType() const
 {
 	return "Box";

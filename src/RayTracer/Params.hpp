@@ -24,5 +24,7 @@ struct Params
 	int recursiveDepth = 6;
 	int superSampling = 1;
 
+	bool useSpatialDataStructure = false;
+
 	bool debugNormals = false;
 };

@@ -277,6 +277,10 @@ void Application::ParseExtraParams(size_t const StartIndex)
 		{
 			params.superSampling = std::stoi(remainder);
 		}
+		else if (argument == "-sds")
+		{
+			params.useSpatialDataStructure = true;
+		}
 	}
 }
 
