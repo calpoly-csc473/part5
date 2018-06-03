@@ -14,44 +14,41 @@ Box::Box(const glm::vec3 & a, const glm::vec3 & b)
 
 float Box::Intersect(const Ray & ray) const
 {
-	float tmin = (min.x - ray.origin.x) / ray.direction.x;
-	float tmax = (max.x - ray.origin.x) / ray.direction.x;
+	float largestMin = std::numeric_limits<float>::lowest();
+	float smallestMax = std::numeric_limits<float>::max();
 
-	if (tmin > tmax)
-		std::swap(tmin, tmax);
+	for (int i = 0; i < 3; ++ i)
+	{
+		if (ray.direction[i] == 0)
+		{
+			if (ray.origin[i] < min[i] || ray.origin[i] > max[i])
+			{
+				return -1;
+			}
+		}
+		else
+		{
+			float tmin = (min[i] - ray.origin[i]) / ray.direction[i];
+			float tmax = (max[i] - ray.origin[i]) / ray.direction[i];
 
-	float tymin = (min.y - ray.origin.y) / ray.direction.y;
-	float tymax = (max.y - ray.origin.y) / ray.direction.y;
+			if (tmin > tmax)
+				std::swap(tmin, tmax);
 
-	if (tymin > tymax)
-		std::swap(tymin, tymax);
-
-	if ((tmin > tymax) || (tymin > tmax))
+			largestMin = glm::max(tmin, largestMin);
+			smallestMax = glm::min(tmax, smallestMax);
+		}
+	}
+	
+	if (largestMin > smallestMax)
 		return -1;
 
-	if (tymin > tmin)
-		tmin = tymin;
-	if (tymax < tmax)
-		tmax = tymax;
-
-	float tzmin = (min.z - ray.origin.z) / ray.direction.z;
-	float tzmax = (max.z - ray.origin.z) / ray.direction.z;
-
-	if (tzmin > tzmax)
-		std::swap(tzmin, tzmax);
-
-	if ((tmin > tzmax) || (tzmin > tmax))
+	if (smallestMax < 0)
 		return -1;
 
-	if (tzmin > tmin)
-		tmin = tzmin;
-	if (tzmax < tmax)
-		tmax = tzmax;
-
-	if ((tmin > std::numeric_limits<float>::max()) || (tmax < 0))
-		return -1;
-
-	return tmin > 0 ? tmin : tmax;
+	if (largestMin > 0)
+		return largestMin;
+	else
+		return smallestMax;
 }
 
 glm::vec3 Box::CalculateNormal(glm::vec3 const & intersectionPoint) const
