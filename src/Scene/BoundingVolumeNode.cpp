@@ -33,17 +33,17 @@ void BoundingVolumeNode::SortObjects(const int axis)
 
 		static bool ByX(const Object * b1, const Object * b2)
 		{
-			return b1->GetCenter().x < b2->GetCenter().x;
+			return b1->GetCenterTransformed().x < b2->GetCenterTransformed().x;
 		};
 
 		static bool ByY(const Object * b1, const Object * b2)
 		{
-			return b1->GetCenter().y < b2->GetCenter().y;
+			return b1->GetCenterTransformed().y < b2->GetCenterTransformed().y;
 		};
 
 		static bool ByZ(const Object * b1, const Object * b2)
 		{
-			return b1->GetCenter().z < b2->GetCenter().z;
+			return b1->GetCenterTransformed().z < b2->GetCenterTransformed().z;
 		};
 
 	};

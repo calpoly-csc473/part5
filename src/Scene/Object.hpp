@@ -36,6 +36,7 @@ public:
 	float IntersectTransformed(Ray const & ray) const;
 	glm::vec3 CalculateNormalTransformed(glm::vec3 const & intersectionPoint) const;
 	AABB ComputeBoundingBoxTransformed() const;
+	glm::vec3 GetCenterTransformed() const;
 
 	virtual float Intersect(Ray const & ray) const = 0;
 	virtual glm::vec3 CalculateNormal(glm::vec3 const & intersectionPoint) const = 0;

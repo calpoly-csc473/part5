@@ -52,3 +52,8 @@ AABB Object::ComputeBoundingBoxTransformed() const
 	box.Transform(modelMatrix);
 	return box;
 }
+
+glm::vec3 Object::GetCenterTransformed() const
+{
+	return glm::vec3(modelMatrix * glm::vec4(GetCenter(), 1.f));
+}
