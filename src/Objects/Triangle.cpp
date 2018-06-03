@@ -67,11 +67,6 @@ AABB Triangle::ComputeBoundingBox() const
 	return aabb;
 }
 
-glm::vec3 Triangle::GetCenter() const
-{
-	return (v1 + v2 + v3) / 3.f;
-}
-
 std::string Triangle::GetObjectType() const
 {
 	return "Triangle";

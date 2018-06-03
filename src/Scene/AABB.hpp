@@ -26,6 +26,7 @@ public:
 	void AddBox(const AABB & other);
 
 	float Intersect(const Ray & ray) const;
+	glm::vec3 GetCenter() const;
 
 	void Transform(const glm::mat4 & m);
 

@@ -46,14 +46,13 @@ glm::vec3 Object::CalculateNormalTransformed(glm::vec3 const & intersectionPoint
 	return glm::normalize(glm::vec3(normalMatrix * glm::vec4(objectSpaceNormal, 0.f)));
 }
 
-AABB Object::ComputeBoundingBoxTransformed() const
+const AABB & Object::GetBoundingBox() const
 {
-	AABB box = ComputeBoundingBox();
-	box.Transform(modelMatrix);
-	return box;
+	return boundingBox;
 }
 
-glm::vec3 Object::GetCenterTransformed() const
+void Object::StoreBoundingBox()
 {
-	return glm::vec3(modelMatrix * glm::vec4(GetCenter(), 1.f));
+	boundingBox = ComputeBoundingBox();
+	boundingBox.Transform(modelMatrix);
 }

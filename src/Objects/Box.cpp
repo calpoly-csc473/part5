@@ -44,11 +44,6 @@ AABB Box::ComputeBoundingBox() const
 	return aabb;
 }
 
-glm::vec3 Box::GetCenter() const
-{
-	return (aabb.min + aabb.max) / 2.f;
-}
-
 std::string Box::GetObjectType() const
 {
 	return "Box";

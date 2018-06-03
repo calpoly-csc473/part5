@@ -20,7 +20,7 @@ AABB BoundingVolumeNode::ComputeBoundingBox(const std::vector<const Object *> & 
 
 	for (const Object * object : objects)
 	{
-		box.AddBox(object->ComputeBoundingBoxTransformed());
+		box.AddBox(object->GetBoundingBox());
 	}
 
 	return box;
@@ -33,17 +33,17 @@ void BoundingVolumeNode::SortObjects(const int axis)
 
 		static bool ByX(const Object * b1, const Object * b2)
 		{
-			return b1->GetCenterTransformed().x < b2->GetCenterTransformed().x;
+			return b1->GetBoundingBox().GetCenter().x < b2->GetBoundingBox().GetCenter().x;
 		};
 
 		static bool ByY(const Object * b1, const Object * b2)
 		{
-			return b1->GetCenterTransformed().y < b2->GetCenterTransformed().y;
+			return b1->GetBoundingBox().GetCenter().y < b2->GetBoundingBox().GetCenter().y;
 		};
 
 		static bool ByZ(const Object * b1, const Object * b2)
 		{
-			return b1->GetCenterTransformed().z < b2->GetCenterTransformed().z;
+			return b1->GetBoundingBox().GetCenter().z < b2->GetBoundingBox().GetCenter().z;
 		};
 
 	};

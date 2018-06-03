@@ -356,6 +356,7 @@ Scene * Application::LoadPovrayScene(const std::string & fileName)
 			object->GetMaterial().finish = o.attributes.finish;
 			object->GetMaterial().color = glm::vec3(o.attributes.pigment.x, o.attributes.pigment.y, o.attributes.pigment.z);
 			object->GetMaterial().filter = o.attributes.pigment.w;
+			object->StoreBoundingBox();
 			scene->AddObject(object);
 		}
 	}

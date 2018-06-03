@@ -35,13 +35,13 @@ public:
 	void SetModelMatrix(glm::mat4 const & modelMatrix);
 	float IntersectTransformed(Ray const & ray) const;
 	glm::vec3 CalculateNormalTransformed(glm::vec3 const & intersectionPoint) const;
-	AABB ComputeBoundingBoxTransformed() const;
-	glm::vec3 GetCenterTransformed() const;
+
+	const AABB & GetBoundingBox() const;
+	void StoreBoundingBox();
 
 	virtual float Intersect(Ray const & ray) const = 0;
 	virtual glm::vec3 CalculateNormal(glm::vec3 const & intersectionPoint) const = 0;
 	virtual AABB ComputeBoundingBox() const = 0;
-	virtual glm::vec3 GetCenter() const = 0;
 	virtual std::string GetObjectType() const = 0;
 
 protected:
@@ -51,5 +51,6 @@ protected:
 	glm::mat4 inverseModelMatrix;
 	glm::mat4 normalMatrix;
 	int id = -1;
+	AABB boundingBox;
 
 };

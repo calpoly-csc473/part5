@@ -87,6 +87,11 @@ float AABB::Intersect(const Ray & ray) const
 		return smallestMax;
 }
 
+glm::vec3 AABB::GetCenter() const
+{
+	return (max + min) / 2.f;
+}
+
 void AABB::Transform(const glm::mat4 & m)
 {
 	glm::vec3 vertices[8] =
