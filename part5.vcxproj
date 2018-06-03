@@ -77,6 +77,7 @@
     <ClCompile Include="src\RayTracer\Pixel.cpp" />
     <ClCompile Include="src\RayTracer\RayTracer.cpp" />
     <ClCompile Include="src\RayTracer\Util.cpp" />
+    <ClCompile Include="src\Scene\AABB.cpp" />
     <ClCompile Include="src\Scene\Camera.cpp" />
     <ClCompile Include="src\Scene\Object.cpp" />
     <ClCompile Include="src\Scene\Scene.cpp" />
@@ -104,6 +105,7 @@
     <ClInclude Include="src\RayTracer\RayTracer.hpp" />
     <ClInclude Include="src\RayTracer\RayTraceResults.hpp" />
     <ClInclude Include="src\RayTracer\Util.hpp" />
+    <ClInclude Include="src\Scene\AABB.hpp" />
     <ClInclude Include="src\Scene\Camera.hpp" />
     <ClInclude Include="src\Scene\Light.hpp" />
     <ClInclude Include="src\Scene\Object.hpp" />

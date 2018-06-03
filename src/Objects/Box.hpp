@@ -6,6 +6,7 @@
 #pragma once
 
 #include <Scene/Object.hpp>
+#include <Scene/AABB.hpp>
 
 
 class Box : public Object
@@ -20,6 +21,6 @@ public:
 
 protected:
 
-	glm::vec3 min, max;
+	AABB aabb;
 
 };
