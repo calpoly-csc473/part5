@@ -46,6 +46,7 @@ public:
 	bool IsLightOccluded(const glm::vec3 & point, const glm::vec3 & lightPosition, PixelContext::Iteration * currentIteration = nullptr) const;
 	RayHitResults GetRayHitResults(const Ray & ray) const;
 	void BuildSpatialDataStructure();
+	BoundingVolumeNode * GetSpatialDataStructure();
 
 protected:
 

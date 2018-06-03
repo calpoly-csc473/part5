@@ -150,13 +150,22 @@ void Application::RunCommands()
 		return;
 	}
 
+	scene = LoadPovrayScene(fileName);
+	rayTracer = new RayTracer(scene);
+
+	if (command == "printbvh")
+	{
+		ParseExtraParams(3);
+		rayTracer->SetParams(params);
+		RayInfo::PrintTree(scene);
+		return;
+	}
+
 
 	///////////////////
 	// Draw Commands //
 	///////////////////
 
-	scene = LoadPovrayScene(fileName);
-	rayTracer = new RayTracer(scene);
 
 	if (commandArguments.size() < 5)
 	{

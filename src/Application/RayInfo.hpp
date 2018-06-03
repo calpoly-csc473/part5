@@ -17,6 +17,7 @@ public:
 	static void FirstHit(RayTracer * rayTracer, Scene * scene, const int x, const int y);
 	static void PixelColor(RayTracer * rayTracer, Scene * scene, const int x, const int y);
 	static void DiagnosticTrace(RayTracer * rayTracer, Scene * scene, const int x, const int y, const bool decoration);
+	static void PrintTree(Scene * scene);
 
 protected:
 

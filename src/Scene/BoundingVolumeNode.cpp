@@ -5,6 +5,7 @@
 
 #include "BoundingVolumeNode.hpp"
 
+#include <iostream>
 #include <algorithm>
 
 
@@ -123,4 +124,35 @@ bool BoundingVolumeNode::Intersect(const Ray & ray, float & outIntersect, const 
 	}
 
 	return outObject != nullptr;
+}
+
+void BoundingVolumeNode::PrintTree(const std::string & name) const
+{
+	std::cout << name << ":" << std::endl;
+	std::cout << "- min: " << box.min << std::endl;
+	std::cout << "- max: " << box.max << std::endl;
+	if (objects.size())
+	{
+		std::cout << "- leaf" << std::endl;
+
+		for (const Object * object : objects)
+		{
+			std::cout << "- object #" << object->GetID() << " (" << object->GetObjectType() << ")" << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << "- branch" << std::endl;
+	}
+	std::cout << std::endl;
+
+
+	if (children.size() > 0)
+	{
+		children[0]->PrintTree(name + "->left");
+	}
+	if (children.size() > 1)
+	{
+		children[1]->PrintTree(name + "->right");
+	}
 }

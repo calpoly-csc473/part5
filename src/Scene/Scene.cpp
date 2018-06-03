@@ -144,3 +144,8 @@ void Scene::BuildSpatialDataStructure()
 	spatialDataStructure = new BoundingVolumeNode(nonPlane);
 	spatialDataStructure->BuildTree(0);
 }
+
+BoundingVolumeNode * Scene::GetSpatialDataStructure()
+{
+	return spatialDataStructure;
+}

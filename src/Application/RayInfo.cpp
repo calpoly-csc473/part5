@@ -91,6 +91,18 @@ void RayInfo::DiagnosticTrace(RayTracer * rayTracer, Scene * scene, const int x,
 	std::cout << std::endl;
 }
 
+void RayInfo::PrintTree(Scene * scene)
+{
+	if (scene->GetSpatialDataStructure())
+	{
+		scene->GetSpatialDataStructure()->PrintTree("root");
+	}
+	else
+	{
+		std::cerr << "Cannot print bvh without -sds argument." << std::endl;
+	}
+}
+
 void RayInfo::RecursiveIterationPrint(const std::string & parentPrefix, const IterationTreeNode * const node, const bool decoration, const bool verbose)
 {
 	PixelContext::Iteration * iteration = node->iteration;

@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <string>
 #include <glm/glm.hpp>
 
 #include "AABB.hpp"
@@ -24,6 +25,7 @@ public:
 	void BuildTree(const int axis);
 
 	bool Intersect(const Ray & ray, float & outIntersect, const Object * & outObject) const;
+	void PrintTree(const std::string & name) const;
 
 protected:
 
